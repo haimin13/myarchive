@@ -25,7 +25,7 @@ export async function GET(
         SELECT 
           *
         FROM ${config.masterTable}
-        WHERE title LIKE ? OR creator LIKE ?
+        WHERE title ILIKE $1 OR creator ILIKE $2
         ORDER BY title ASC 
         LIMIT 50
       `;

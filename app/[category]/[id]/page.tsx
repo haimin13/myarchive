@@ -142,7 +142,7 @@ export default function DetailPage() {
               </div>
             ) : (
               <>
-                <span>{new Date(item.selected_date).toLocaleDateString()}</span>
+                <span>{getLocalDateString(item.selected_date)}</span>
                 <button 
                   onClick={() => {
                     setTempDate(getLocalDateString(item.selected_date));

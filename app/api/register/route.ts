@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const sql = `INSERT INTO users (user_id, password, nickname) VALUES (?,?,?)`;
+    const sql = `INSERT INTO users (user_id, password, nickname) VALUES ($1, $2, $3)`;
     await executeQuery(sql, [user_id, password, nickname]);
 
     return NextResponse.json({ message: '회원가입 성공!' }, { status: 201 });

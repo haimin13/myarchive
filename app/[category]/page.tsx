@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
+import { getLocalDateString } from '@/lib/simple';
 import Link from 'next/link';
 
 export default function ListPage() {
@@ -159,7 +160,7 @@ export default function ListPage() {
                        <h3 className="font-bold text-gray-900 truncate">{item.title}</h3>
                        <p className="text-sm text-gray-500 truncate">{item.creator}</p>
                        <p className="text-xs text-gray-400 mt-1">
-                         {new Date(item.selected_date).toLocaleDateString()}
+                         {getLocalDateString(item.selected_date)}
                        </p>
                      </div>
                    </Link>
@@ -191,7 +192,7 @@ export default function ListPage() {
                        )}
                        {/* 날짜 뱃지 (이미지 위에 살짝 얹기) */}
                        <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-                         {new Date(item.selected_date).toLocaleDateString()}
+                         {getLocalDateString(item.selected_date)}
                        </div>
                      </div>
 

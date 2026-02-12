@@ -1,9 +1,16 @@
 export function getLocalDateString(date: any): string {
   if (!date) return '';
-  if (typeof date === 'string') {
-    return date.substring(0, 10);
-  }
-  const offset = new Date().getTimezoneOffset() * 60000;
-  const localDate = new Date(date.getTime() - offset);
-  return localDate.toISOString().split('T')[0];
-};
+  const d = typeof date === 'string' ? new Date(date) : date;
+  
+  if (isNaN(d.getTime())) return '';
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+    .format(d)
+    .replace(/\. /g, '-')
+    .replace(/\./g, '');
+}

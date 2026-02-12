@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { user_id, password } = body;
 
-    const sql = `SELECT * FROM users WHERE user_id = ?`;
+    const sql = `SELECT * FROM users WHERE user_id = $1`;
     const results = await executeQuery(sql, [user_id]);
 
     const users = results as any[];

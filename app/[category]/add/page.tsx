@@ -16,7 +16,7 @@ export default function AddPage() {
   const [formData, setFormData] = useState<any>(() => ({
     title: '',
     img_dir: '',
-    selected_date: getLocalDateString(''),
+    selected_date: getLocalDateString(new Date()),
     creator: ''
   }));
   const [userId, setUserId] = useState<number | null>(null);
@@ -108,7 +108,7 @@ export default function AddPage() {
       title: '',
       img_dir: '',
       creator: '',
-      selected_date: getLocalDateString('')
+      selected_date: getLocalDateString(new Date())
     });
     setItemId(null); // ID 초기화 (신규 등록임)
     setShowForm(true);

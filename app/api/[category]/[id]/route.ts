@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db';
 import { CATEGORY_CONFIG } from '@/app/constants';
+import { getLocalDateString } from '@/lib/simple';
 
 export async function GET(
   request: Request,
@@ -20,7 +21,7 @@ export async function GET(
         m.*
       FROM ${config.selectedTable} s
       JOIN ${config.masterTable} m ON s.item_id = m.id
-      WHERE s.id = ?
+      WHERE s.id = $1
       LIMIT 1
       `;
 
@@ -72,14 +73,14 @@ export async function PUT(
   try {
     // 1️⃣ 날짜 수정 (상세 페이지에서 요청)
     if (selected_date) {
-      const formattedDate = selected_date.toString().split('T')[0];
-      const updateDateSql = `UPDATE ${config.selectedTable} SET selected_date = ? WHERE id = ?`;
+      const formattedDate = getLocalDateString(selected_date);
+      const updateDateSql = `UPDATE ${config.selectedTable} SET selected_date = $1 WHERE id = $2`;
       await executeQuery(updateDateSql, [formattedDate, id]);
     }
 
     // 2️⃣ 내용 수정 (수정 페이지에서 요청)
     if (Object.keys(masterData).length > 0) {
-      const findSql = `SELECT item_id FROM ${config.selectedTable} WHERE id = ?`;
+      const findSql = `SELECT item_id FROM ${config.selectedTable} WHERE id = $1`;
       const rows = await executeQuery(findSql, [id]) as any[];
 
       if (rows.length > 0) {
@@ -87,9 +88,10 @@ export async function PUT(
         const keys = Object.keys(masterData);
         const values = Object.values(masterData);
         
-        const setClause = keys.map(key => `${key} = ?`).join(', ');
+        const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+        const idIndex = keys.length + 1
 
-        const updateMasterSql = `UPDATE ${config.masterTable} SET ${setClause} WHERE id = ?`;
+        const updateMasterSql = `UPDATE ${config.masterTable} SET ${setClause} WHERE id = $${idIndex}`;
         await executeQuery(updateMasterSql, [...values, masterId]);
       }
     }
