@@ -49,7 +49,7 @@ export async function DELETE(
   if (!config) {
     return NextResponse.json({message: "카테고리 없음"}, {status: 400});
   }
-  const sql = `DELETE FROM ${config.selectedTable} WHERE id = ?`;
+  const sql = `DELETE FROM ${config.selectedTable} WHERE id = $1`;
   await executeQuery(sql, [id]);
 
   return NextResponse.json({ message: '삭제됨' });
