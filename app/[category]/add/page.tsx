@@ -50,13 +50,18 @@ export default function AddPage() {
 
     const res = await fetch(endpoint);
     const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || '검색 중 오류가 발생했습니다.');
+      setSearchResults([]);
+      return;
+    }
     setSearchResults(data.items || []);
     console.log(data.items);
     
           
     } catch(err)  {
         console.error(err);
-        setLoading(false);
     } finally {
       setLoading(false);
     }

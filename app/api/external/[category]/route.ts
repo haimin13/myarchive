@@ -13,6 +13,13 @@ export async function GET(
     return NextResponse.json({ items: [] })
   }
 
+  if (category !== 'albums') {
+    return NextResponse.json(
+      { message: "현재 온라인 검색을 지원하지 않는 카테고리입니다." },
+      { status: 400 }
+    );
+  }
+
   const results = await searchExternalContent(category, query);
   return NextResponse.json({ items: results });
 }
