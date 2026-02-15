@@ -25,6 +25,7 @@ export default function AddPage() {
   const [keyword, setKeyword] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [searchMode, setSearchMode] = useState<'internal' | 'external'>('external');
 
@@ -120,24 +121,33 @@ export default function AddPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     e.preventDefault();
     if (!userId) return;
 
-    const res = await fetch(`/api/${category}`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        ...formData,
-        user_id: userId,
-        item_id: itemId
-      }),
-    });
+    try {
+      const res = await fetch(`/api/${category}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          ...formData,
+          user_id: userId,
+          item_id: itemId
+        }),
+      });
 
-    if (res.ok) {
-      alert(`${config.koreanName} 저장 완료!`);
-      router.push(`/${category}`);
-    } else {
-      alert('저장 실패;')
+      if (res.ok) {
+        alert(`${config.koreanName} 저장 완료!`);
+        router.push(`/${category}`);
+      } else {
+        alert('저장 실패;')
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
@@ -312,9 +322,14 @@ export default function AddPage() {
               {/* 저장 버튼 */}
               <button
                 type="submit"
-                className="w-full py-3 mt-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-lg"
+                disabled={isSubmitting}
+                className={`w-full py-3 mt-4 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-lg ${
+                  isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
-                저장하기
+                {isSubmitting ? '저장 중...' : '저장하기'}
               </button>
             </form>
           </div>
