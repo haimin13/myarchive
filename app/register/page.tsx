@@ -42,7 +42,7 @@ export default function RegisterPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">아이디</label>
             <input
               type="text" value={userId} onChange={(e) => setUserId(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
               placeholder="아이디를 입력하세요"
               required
             />
@@ -51,7 +51,7 @@ export default function RegisterPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
             <input
             type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
             placeholder="비밀번호"
             required
             />
@@ -60,7 +60,7 @@ export default function RegisterPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
             <input
             type="text" value={nickname} onChange={(e) => setNickname(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
             placeholder="닉네임"
             required
             />

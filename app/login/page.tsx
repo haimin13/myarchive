@@ -47,7 +47,7 @@ export default function LoginPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">아이디</label>
             <input
               type="text" value={userId} onChange={(e) => setUserId(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               required
             />
           </div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
             <input
               type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               required
             />
           </div>

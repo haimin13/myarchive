@@ -218,7 +218,7 @@ export default function AddPage() {
                 placeholder={`제목 또는 ${config.fields[0].label} 검색`}
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
                 autoFocus
               />
               <button 
@@ -314,7 +314,7 @@ export default function AddPage() {
                   name="selected_date"
                   value={formData.selected_date}
                   onChange={(e) => handleChange('selected_date', e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500 text-gray-900"
                   required
                 />
               </div>
