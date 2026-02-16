@@ -24,7 +24,7 @@ export default function InputField ({ field, value, onChange, isReadOnly }: any)
           w-full p-3 border rounded-lg outline-none
           ${isReadOnly 
             ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
-            : 'focus:ring-2 focus:ring-blue-500 bg-white'
+            : 'focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400'
           }
         `}
       />
