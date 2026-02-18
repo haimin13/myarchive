@@ -16,9 +16,10 @@ export default function AddBulkPage() {
   const [file, setFile] = useState<File | null>(null);
   const [parsedList, setParsedList] = useState<string[][]>([]);
   const [matchedList, setMatchedList] = useState<any[]>([]);
-  
-  // ✨ 추가: 파싱 결과 테이블을 접고 펴는 상태
   const [isParsedOpen, setIsParsedOpen] = useState(true);
+
+  const [isMatching, setIsMatching] = useState(false); // 매칭 진행 중 여부
+  const [matchProgress, setMatchProgress] = useState(0); // 0 ~ 100 퍼센티지
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -44,47 +45,57 @@ export default function AddBulkPage() {
   }
 
   const handleMatchClick = async () => {
-    setMatchedList([]);
     if (!parsedList || parsedList.length === 0) return;
-    let result: any[] = [];
+
+    setIsMatching(true);
+    setMatchProgress(0);
+    setIsParsedOpen(false);
+    const initialList = parsedList.map(item => ({
+      original: item,
+      matchedItem: null,
+      matchStatus: 'loading'
+    }));
+    setMatchedList(initialList);
+
     try {
-      for (const [index, item] of parsedList.entries()) {
-        let matchData = {
-          original: item,
-          matchedItem: null,
-          matchStatus: 'failed'
-        };
+      for (const [i, item] of parsedList.entries()) {
+        const item = parsedList[i];
+        let matchData = {...initialList[i]};
 
         let query = item[1];
         let endpoint = `/api/${category}/search?q=${query}`;
-
         let res = await fetch(endpoint);
         let data = await res.json();
+
         if (res.ok && data.items && data.items.length > 0) {
           matchData.matchedItem = data.items[0];
           matchData.matchStatus = 'db';
-          result.push(matchData);
-          continue;
+          
+        } else {
+          if (category === 'albums') query = `${item[0]} ${item[1]}`;
+          endpoint = `/api/external/${category}?q=${query}`;
+          res = await fetch(endpoint);
+          data = await res.json();
+          if (res.ok && data.items && data.items.length > 0) {
+            matchData.matchedItem = data.items[0];
+            matchData.matchStatus = 'api';
+          } else {
+            matchData.matchStatus = 'failed';
+          }
+          await new Promise(resolve => setTimeout(resolve, 0));
         }
+        setMatchedList(prev => {
+          const newList = [...prev];
+          newList[i] = matchData;
+          return newList;
+        });
 
-        if (category === 'albums') query = `${item[0]} ${item[1]}`;
-        endpoint = `/api/external/${category}?q=${query}`;
-        res = await fetch(endpoint);
-        data = await res.json();
-        if (res.ok && data.items && data.items.length > 0) {
-          matchData.matchedItem = data.items[0];
-          matchData.matchStatus = 'api';
-          result.push(matchData);
-          continue;
-        }
-
-        result.push(matchData);
+        setMatchProgress(Math.round(((i + 1) / parsedList.length) * 100));
       }
-      setMatchedList(result);
-      setIsParsedOpen(false); // ✨ 센스 추가: 매칭이 끝나면 파싱 리스트는 자동으로 접기
     } catch (error) {
       console.error("매칭 중 에러 발생:", error); // 오타 수정
-      return;
+    } finally {
+      setIsMatching(false);
     }
   }
 
@@ -123,24 +134,27 @@ export default function AddBulkPage() {
                 type="file"
                 accept=".csv"
                 onChange={handleFileChange}
-                className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold 
+                  file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
             </div>
-            
+            {/* 파싱 버튼 */}
             <button 
               onClick={handleParseClick} 
               disabled={!file && !textInput.trim()}
-              className="px-8 py-3 mt-5 sm:mt-0 rounded-lg font-bold transition shrink-0 shadow-sm text-white disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none bg-blue-600 hover:bg-blue-700"
+              className="px-8 py-3 mt-5 sm:mt-0 rounded-lg font-bold transition shrink-0 shadow-sm text-white
+                disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none bg-blue-600 hover:bg-blue-700"
             >
               파싱!
             </button>
-            
+            {/* 매칭 버튼 */}
             <button
               onClick={handleMatchClick}
-              disabled={!parsedList || parsedList.length === 0} 
-              className="px-8 py-3 mt-5 sm:mt-0 rounded-lg font-bold transition shrink-0 shadow-sm text-white disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none bg-indigo-600 hover:bg-indigo-700"
+              disabled={!parsedList || parsedList.length === 0 || isMatching} 
+              className="px-8 py-3 mt-5 sm:mt-0 rounded-lg font-bold transition shrink-0 shadow-sm text-white
+                disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none bg-indigo-600 hover:bg-indigo-700"
             >
-              매칭!
+              {isMatching ? `매칭 중... (${matchProgress}%)` : '매칭!'}
             </button>
           </div>
 
@@ -157,7 +171,8 @@ export default function AddBulkPage() {
                   ? "파일이 선택되어 텍스트 입력이 비활성화되었습니다." 
                   : `아티스트명; 앨범명; 2024-01-01\n아티스트명2; 앨범명2; 2024-01-02`
               }
-              className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm text-gray-900 placeholder-gray-400"
+              className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100
+                disabled:cursor-not-allowed text-sm text-gray-900 placeholder-gray-400"
             />
           </div>
         </div>
@@ -211,13 +226,25 @@ export default function AddBulkPage() {
             {/* 2️⃣ 매칭 결과 리스트 */}
             {matchedList.length > 0 && (
               <div className="border border-indigo-200 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-indigo-50 px-4 py-3 border-b border-indigo-200 flex justify-between items-center">
-                  <h2 className="text-lg font-bold text-indigo-900">
-                    자동 매칭 결과 ({matchedList.length}건)
-                  </h2>
-                  <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-bold">
-                    수정하려면 클릭하세요
-                  </span>
+                
+                <div className="bg-indigo-50 px-4 py-3 border-b border-indigo-200 flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-indigo-900">
+                      자동 매칭 결과 ({matchedList.length}건)
+                    </h2>
+                    {!isMatching && (
+                      <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-bold">
+                        수정하려면 클릭하세요
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* ✨ 진행률 프로그레스 바 추가 */}
+                  {isMatching && (
+                    <div className="w-full bg-indigo-200 rounded-full h-2.5">
+                      <div className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${matchProgress}%` }}></div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="overflow-x-auto bg-white">
@@ -234,25 +261,37 @@ export default function AddBulkPage() {
                       {matchedList.map((item, index) => (
                         <tr 
                           key={index} 
-                          onClick={() => handleItemClick(index)} // ✨ 팝업 클릭 이벤트 예약
-                          className="border-b hover:bg-indigo-50 cursor-pointer transition"
+                          onClick={() => !isMatching && handleItemClick(index)} 
+                          className={`border-b transition ${isMatching ? 'opacity-70' : 'hover:bg-indigo-50 cursor-pointer'}`}
                         >
-                          {/* 상태 뱃지 */}
+                          {/* 상태 뱃지 업데이트 */}
                           <td className="px-4 py-3">
-                            {item.matchStatus === 'db' && <span className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold border border-green-200">DB</span>}
-                            {item.matchStatus === 'api' && <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold border border-blue-200">API</span>}
-                            {item.matchStatus === 'failed' && <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold border border-red-200">Fail</span>}
+                            {item.matchStatus === 'loading' && <span className="inline-block bg-gray-100 text-gray-500 px-2 py-1 rounded 
+                              text-xs font-bold border border-gray-200 animate-pulse">WAIT</span>}
+                            {item.matchStatus === 'db' && <span className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded 
+                              text-xs font-bold border border-green-200">DB</span>}
+                            {item.matchStatus === 'api' && <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded 
+                              text-xs font-bold border border-blue-200">API</span>}
+                            {item.matchStatus === 'failed' && <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded 
+                              text-xs font-bold border border-red-200">FAIL</span>}
                           </td>
                           
-                          {/* 원본 텍스트 */}
                           <td className="px-4 py-3 text-gray-500">
                             <div className="font-semibold">{item.original[1]}</div>
                             <div className="text-xs">{item.original[0]}</div>
                           </td>
                           
-                          {/* 매칭된 썸네일 & 정보 */}
                           <td className="px-4 py-3">
-                            {item.matchedItem ? (
+                            {/* 로딩 중일 때 뼈대(스켈레톤) UI */}
+                            {item.matchStatus === 'loading' ? (
+                              <div className="flex items-center gap-3 animate-pulse">
+                                <div className="w-10 h-10 bg-gray-200 rounded"></div>
+                                <div className="flex flex-col gap-2 w-full">
+                                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                                  <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                                </div>
+                              </div>
+                            ) : item.matchedItem ? (
                               <div className="flex items-center gap-3">
                                 {item.matchedItem.img_dir ? (
                                   <img 
@@ -273,7 +312,6 @@ export default function AddBulkPage() {
                             )}
                           </td>
                           
-                          {/* 날짜 */}
                           <td className="px-4 py-3 text-center text-gray-700 font-medium">
                             {item.original[2] || '-'}
                           </td>
@@ -284,7 +322,6 @@ export default function AddBulkPage() {
                 </div>
               </div>
             )}
-            
           </div>
         )}
       </div>
