@@ -70,20 +70,51 @@ export default function AddBulkPage() {
         if (res.ok && data.items && data.items.length > 0) {
           matchData.matchedItem = data.items[0];
           matchData.matchStatus = 'db';
-          
         } else {
-          if (category === 'albums') query = `${item[0]} ${item[1]}`;
+          // 🚀 외부 API 검색: Rate Limit 방어를 위한 재시도(Retry) 로직 추가
+          if (category === 'albums')
+            query = `${item[0]} ${item[1]}`;
           endpoint = `/api/external/${category}?q=${query}`;
-          res = await fetch(endpoint);
-          data = await res.json();
-          if (res.ok && data.items && data.items.length > 0) {
-            matchData.matchedItem = data.items[0];
-            matchData.matchStatus = 'api';
-          } else {
-            matchData.matchStatus = 'failed';
-          }
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
+
+          let retryCount = 0;
+          const maxRetries = 3; // 최대 3번까지 재시도
+          let apiSuccess = false;
+
+          while (retryCount < maxRetries && !apiSuccess) {
+            try {
+              res = await fetch(endpoint);
+              
+              // HTTP 상태 코드가 정상이 아니면(예: 429 Too Many Requests, 403) 에러 발생시켜서 catch로 넘김
+              if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+              // 파싱하다가 Rate limit 텍스트 때문에 뻑나도 catch로 넘어감
+              data = await res.json();
+
+              if (data.items && data.items.length > 0) {
+                matchData.matchedItem = data.items[0];
+                matchData.matchStatus = 'api';
+              } else {
+                matchData.matchStatus = 'failed';
+              }
+              apiSuccess = true; // 성공했으니 while 루프 탈출!
+
+            } catch (apiError) {
+              retryCount++;
+              console.warn(`[API 제한 감지] ${retryCount}회 실패. 3초 대기 후 재시도...`);
+              
+              if (retryCount < maxRetries) {
+                // 실패 시 3초(3000ms) 푹 쉬고 다시 while 루프 돔
+                await new Promise(resolve => setTimeout(resolve, 3000));
+              } else {
+                // 3번이나 다시 했는데도 안 되면 진짜 실패 처리
+                matchData.matchedItem = null;
+                matchData.matchStatus = 'failed';
+              }
+            }
+          } // while 끝
+        } // 외부 API 검색 끝
+
+        // 화면 즉각 업데이트
         setMatchedList(prev => {
           const newList = [...prev];
           newList[i] = matchData;
@@ -91,9 +122,12 @@ export default function AddBulkPage() {
         });
 
         setMatchProgress(Math.round(((i + 1) / parsedList.length) * 100));
+
+        // 🛡️ 핵심 방어막: Vercel이 너무 빠르므로, 무조건 한 항목이 끝날 때마다 강제로 휴식
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     } catch (error) {
-      console.error("매칭 중 에러 발생:", error); // 오타 수정
+      console.error("매칭 중 에러 발생:", error);
     } finally {
       setIsMatching(false);
     }
