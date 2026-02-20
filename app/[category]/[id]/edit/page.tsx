@@ -1,10 +1,11 @@
+// app/[category]/[id]/edit/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
 import { getLocalDateString } from '@/lib/simple';
-import InputField from '@/components/InputField';
+import ItemForm from '@/components/item/ItemForm';
 
 export default function EditPage() {
   const router = useRouter();
@@ -81,57 +82,15 @@ export default function EditPage() {
   if (!config || loading) return <div>로딩 중...</div>;
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-xl font-bold mb-6 text-gray-800">
-          {config.koreanName} 수정하기 ✏️
-        </h1>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          
-          {/* ✨ [추가됨] 이미지 미리보기 (AddPage와 동일한 위치) */}
-          <div>
-            {formData.img_dir && (
-              <div className="mb-4 text-center">
-                <img 
-                  src={formData.img_dir} 
-                  alt="미리보기" 
-                  className="h-32 object-contain mx-auto rounded border"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-              </div>
-            )}
-          </div>
-          
-          {/* ✨ InputField 컴포넌트로 반복문 처리! 코드가 정말 깔끔해졌죠? */}
-          {allFields.map((field: any) => (
-            <InputField
-              key={field.name}
-              field={field}
-              value={formData[field.name]}
-              onChange={handleChange}
-              // 수정 페이지에서는 기본적으로 다 수정 가능하게 둡니다.
-              // 만약 특정 필드(예: creator)를 못 고치게 하려면 조건을 넣으세요.
-              isReadOnly={false} 
-            />
-          ))}
-
-          <div className="flex gap-2 mt-6">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex-1 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300"
-            >
-              취소
-            </button>
-            <button
-              type="submit"
-              className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"
-            >
-              수정 완료
-            </button>
-          </div>
-        </form>
-      </div>
+      <ItemForm 
+        config={config}
+        formData={formData}
+        allFields={allFields}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+        onCancel={() => router.back()} // 부모가 취소 동작을 결정
+        submitText="수정 완료"
+      />
     </div>
   );
 }
