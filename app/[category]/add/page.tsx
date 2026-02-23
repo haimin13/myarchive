@@ -177,17 +177,30 @@ export default function AddPage() {
         {!showForm ? (
           /* 검색 화면 (SCENE 1) */
           <div>
-            <div className="flex items-center mb-6 border-b pb-4">
-               <button 
-                 onClick={() => router.push(`/${category}`)} 
-                 className="mr-3 text-gray-500 hover:text-black"
-                 aria-label="뒤로 가기"
-               >
-                 ←
-               </button>
-               <h1 className="text-2xl font-bold text-gray-800">
-                 🔎 {config.koreanName} 검색
-               </h1>
+            <div className="flex items-center justify-between mb-6 border-b pb-4">
+              <div className="flex items-center">
+                <button 
+                  onClick={() => router.push(`/${category}`)} 
+                  className="mr-3 text-gray-500 hover:text-black"
+                  aria-label="뒤로 가기"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                </button>
+                <h1 className="text-2xl font-bold text-gray-800">
+                  🔎 {config.koreanName} 검색
+                </h1>
+              </div>
+              <button
+                 onClick={() => router.push(`/${category}/add/bulk`)}
+                 className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                일괄 등록
+              </button>
             </div>
 
             {/* 검색 모드 탭 (Internal vs External) */}
@@ -274,12 +287,14 @@ export default function AddPage() {
           /* 입력 폼 (SCENE 2) */
           <div>
             <div className="flex items-center mb-6 border-b pb-4">
-               <button onClick={() => setShowForm(false)} className="mr-3 text-gray-500 hover:text-black">
-                 ←
-               </button>
-               <h1 className="text-2xl font-bold text-gray-800">
-                 {config.koreanName} 정보 입력 📝
-               </h1>
+              <button onClick={() => setShowForm(false)} className="mr-3 text-gray-500 hover:text-black">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+              <h1 className="text-2xl font-bold text-gray-800">
+                {config.koreanName} 정보 입력 📝
+              </h1>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">

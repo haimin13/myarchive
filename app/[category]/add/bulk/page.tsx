@@ -187,6 +187,23 @@ export default function AddBulkPage() {
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 p-6">
       <div className="w-full max-w-5xl bg-white p-8 rounded-lg shadow-md">
+      {/*상단 헤더 영역*/}
+        <div className="flex items-center justify-between mb-8 pb-4 border-b">
+          <div className="flex items-center">
+            <button 
+              onClick={() => router.push(`/${category}/add`)} 
+              className="mr-4 text-gray-500 hover:text-black transition-colors p-1"
+              aria-label="일반 등록으로 돌아가기"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
+            <h1 className="text-2xl font-bold text-gray-800">
+              📦 {config.koreanName} 일괄 등록
+            </h1>
+          </div>
+        </div>
         {/* 1. 입력 폼 컴포넌트 */}
         <BulkInputForm 
           file={file}
