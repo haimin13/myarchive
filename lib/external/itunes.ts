@@ -1,6 +1,5 @@
 // lib/external/itunes.ts
-
-let aa: any;
+import { getLocalDateString } from "../simple";
 
 export async function searchITunes(query: string) {
   const term = encodeURIComponent(query).replace(/%20/g, '+');
@@ -55,7 +54,7 @@ export async function searchITunes(query: string) {
       title: item.collectionName,
       creator: item.artistName,
       img_dir: highResImage,
-      release_date: item.releaseDate,
+      release_date: getLocalDateString(item.releaseDate),
     };
   });
 

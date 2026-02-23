@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Props {
   data: any[];
   isMatching: boolean;
@@ -19,7 +17,7 @@ export default function MatchedTable({ data, isMatching, matchProgress, onItemCl
           </h2>
           {!isMatching && (
             <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-bold">
-              수정하려면 클릭하세요
+              수정하려면 항목을 클릭하세요
             </span>
           )}
         </div>
@@ -38,7 +36,7 @@ export default function MatchedTable({ data, isMatching, matchProgress, onItemCl
               <th className="px-4 py-3 w-16">상태</th>
               <th className="px-4 py-3 w-1/3">입력된 원본 데이터</th>
               <th className="px-4 py-3">매칭된 정보 (미리보기)</th>
-              <th className="px-4 py-3 w-24 text-center">선택 날짜</th>
+              <th className="px-4 py-3 w-26 text-center">선택 날짜</th>
             </tr>
           </thead>
           <tbody>

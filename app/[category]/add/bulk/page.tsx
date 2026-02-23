@@ -136,6 +136,35 @@ export default function AddBulkPage() {
   }
 
   const handleBulkSave = async () => {
+    const itemsToSave = matchedList
+      .filter(item => item.matchStatus === 'api' || item.matchStatus === 'db' || item.matchStatus === 'manual')
+      .map(item => ({
+        matchStatus: item.matchStatus,
+        itemId: item.matchedItem.id || null,
+        selectedDate: item.original.at(-1),
+        matchedItem: item.matchedItem
+      }));
+    if (itemsToSave.length === 0) {
+      alert('저장할 항목이 없습니다.');
+      return;
+    }
+    console.log(itemsToSave);
+    try {
+      const res = await fetch(`/api/${category}/bulk`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, items: itemsToSave }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+
+        alert(`총 ${data.count} 개 ${config.koreanName} 일괄 저장 완료!`);
+        router.push(`/${category}`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   useEffect(() => {
@@ -195,6 +224,19 @@ export default function AddBulkPage() {
             />
           </div>
         )}
+        <div className="mt-10 pt-6 border-t border-gray-100 flex justify-end">
+          <button
+            onClick={handleBulkSave}
+            disabled={isMatching || !matchedList.some(item => ['db', 'api', 'manual'].includes(item.matchStatus))}
+            className="flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white font-bold rounded-lg 
+              hover:bg-blue-700 transition-all shadow-md active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            일괄 등록하기
+          </button>
+        </div>
       </div>
       <BaseModal
         isOpen={isModalOpen}
