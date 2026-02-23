@@ -5,7 +5,6 @@ import InputField from '@/components/InputField';
 interface Props {
   config: any;
   formData: any;
-  allFields: any[];
   onChange: (name: string, value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
@@ -13,8 +12,16 @@ interface Props {
 }
 
 export default function ItemForm({ 
-  config, formData, allFields, onChange, onSubmit, onCancel, submitText = "저장" 
+  config, formData, onChange, onSubmit, onCancel, submitText = "저장" 
 }: Props) {
+  const allFields = config ? [
+    { name: 'title', label: '제목', required: true },
+    ...config.fields,
+    { name: 'img_dir', label: '이미지 주소 (URL)', placeholder: 'https://...' }
+  ] : [];
+
+  
+
   return (
     <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
       <h1 className="text-xl font-bold mb-6 text-gray-800">

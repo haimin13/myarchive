@@ -1,5 +1,6 @@
 export const CATEGORY_CONFIG: any = {
   albums: {
+    name: 'albums',
     koreanName: '앨범',
     masterTable: 'albums',
     selectedTable: 'selected_albums',
@@ -9,6 +10,7 @@ export const CATEGORY_CONFIG: any = {
     ],
   },
   games: {
+    name: 'games',
     koreanName: '게임',
     masterTable: 'games',
     selectedTable: 'selected_games',

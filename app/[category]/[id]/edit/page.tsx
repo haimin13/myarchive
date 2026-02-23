@@ -21,12 +21,6 @@ export default function EditPage() {
   });
   const [loading, setLoading] = useState(true);
 
-  const allFields = config ? [
-    { name: 'title', label: '제목', required: true },
-    ...config.fields,
-    { name: 'img_dir', label: '이미지 주소 (URL)', placeholder: 'https://...' }
-  ] : [];
-
   useEffect(() => {
     if (!config) return;
 
@@ -85,7 +79,6 @@ export default function EditPage() {
       <ItemForm 
         config={config}
         formData={formData}
-        allFields={allFields}
         onChange={handleChange}
         onSubmit={handleSubmit}
         onCancel={() => router.back()} // 부모가 취소 동작을 결정

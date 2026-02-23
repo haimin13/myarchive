@@ -49,10 +49,16 @@ export default function MatchedTable({ data, isMatching, matchProgress, onItemCl
                 className={`border-b transition ${isMatching ? 'opacity-70' : 'hover:bg-indigo-50 cursor-pointer'}`}
               >
                 <td className="px-4 py-3">
-                  {item.matchStatus === 'loading' && <span className="inline-block bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold border border-gray-200 animate-pulse">WAIT</span>}
-                  {item.matchStatus === 'db' && <span className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold border border-green-200">DB</span>}
-                  {item.matchStatus === 'api' && <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold border border-blue-200">API</span>}
-                  {item.matchStatus === 'failed' && <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold border border-red-200">FAIL</span>}
+                  {item.matchStatus === 'loading' && <span className="inline-block bg-gray-100 text-gray-500
+                    px-2 py-1 rounded text-xs font-bold border border-gray-200 animate-pulse">WAIT</span>}
+                  {item.matchStatus === 'db' && <span className="inline-block bg-green-100 text-green-700
+                    px-2 py-1 rounded text-xs font-bold border border-green-200">DB</span>}
+                  {item.matchStatus === 'api' && <span className="inline-block bg-blue-100 text-blue-700
+                    px-2 py-1 rounded text-xs font-bold border border-blue-200">API</span>}
+                  {item.matchStatus === 'manual' && <span className="inline-block bg-yellow-100 text-yellow-700
+                    px-2 py-1 rounded text-xs font-bold border border-yellow-200">MANUAL</span>}
+                  {item.matchStatus === 'failed' && <span className="inline-block bg-red-100 text-red-700
+                    px-2 py-1 rounded text-xs font-bold border border-red-200">FAIL</span>}
                 </td>
                 
                 <td className="px-4 py-3 text-gray-500">

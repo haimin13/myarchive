@@ -1,3 +1,5 @@
+// app/[category]/add/bulk/page.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,10 +7,15 @@ import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
 import { parseCSV } from '@/lib/simple';
 import { useBulkMatch } from '@/hooks/useBulkMatch';
+import { getLocalDateString } from '@/lib/simple';
 
 import BulkInputForm from '@/components/bulk/BulkInputForm';
 import ParsedTable from '@/components/bulk/ParsedTable';
 import MatchedTable from '@/components/bulk/MatchedTable';
+import BaseModal from '@/components/item/BaseModal';
+import ItemSearch from '@/components/item/ItemSearch';
+import ItemForm from '@/components/item/ItemForm';
+
 
 export default function AddBulkPage() {
   const router = useRouter();
@@ -21,14 +28,50 @@ export default function AddBulkPage() {
   const [file, setFile] = useState<File | null>(null);
   const [parsedList, setParsedList] = useState<string[][]>([]);
   const [isParsedOpen, setIsParsedOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [targetIndex, setTargetIndex] = useState<number | null>(null);
 
   const { 
-    matchedList, 
-    isMatching, 
-    matchProgress, 
+    matchedList,
+    setMatchedList,
+    isMatching,
+    matchProgress,
     startMatching 
   } = useBulkMatch(category);
 
+  const [formData, setFormData] = useState<any>(() => ({
+    title: '',
+    img_dir: '',
+    creator: ''
+  }));
+
+  const handleFormChange = (name: string, value: string) => {
+    setFormData((prev: any) => ({...prev, [name]: value}));
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (targetIndex === null) return;
+    setMatchedList(prev => {
+      const newList = [...prev];
+      newList[targetIndex] = {
+        ...newList[targetIndex],
+        matchedItem: {...formData },
+        matchStatus: 'manual'
+      };
+
+      return newList;
+    });
+
+    closeModal();
+  }
+
+  const closeModal = () => {
+    setTargetIndex(null);
+    setFormData({title: '', img_dir: '', creator: ''});
+    setIsModalOpen(false);
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -57,9 +100,42 @@ export default function AddBulkPage() {
     startMatching(parsedList);
   }
 
-  // (임시) 클릭 시 팝업 띄울 자리
-  const handleItemClick = (index: number) => {
-    alert(`${index + 1}번 항목 수정 팝업 띄우기! (추후 구현)`);
+  const handleMatchedItemClick = (index: number) => {
+    setTargetIndex(index);
+    const clickedItem = matchedList[index];
+    if (clickedItem && clickedItem.matchedItem) {
+      handleSearchResultSelect(clickedItem.matchedItem);
+    }
+    else {
+      setFormData({title: '', img_dir: '', creator: ''});
+    }
+    setIsModalOpen(true);
+  }
+
+  const handleSearchResultSelect = (item: any) => {
+    const newFormData: any = {
+      ...formData,
+      title: item.title,
+      creator: item.creator,
+      img_dir: item.img_dir || '',
+    };
+
+    config.fields.forEach((field: any) => {
+      const dbValue = item[field.name];
+
+      if (dbValue) {
+        if (field.name === 'release_date') {
+          newFormData[field.name] = getLocalDateString(dbValue);
+        }
+        else {
+          newFormData[field.name] = dbValue;
+        }
+      }
+    });
+    setFormData(newFormData);
+  }
+
+  const handleBulkSave = async () => {
   }
 
   useEffect(() => {
@@ -115,11 +191,38 @@ export default function AddBulkPage() {
               data={matchedList} 
               isMatching={isMatching} 
               matchProgress={matchProgress} 
-              onItemClick={handleItemClick} 
+              onItemClick={handleMatchedItemClick}
             />
           </div>
         )}
       </div>
+      <BaseModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="항목 재검색 및 수정"
+      >
+        <div className="flex flex-col gap-6">
+          <div className="border-b border-gray-200 pb-6">
+            <h3 className="text-sm font-bold text-gray-500 mb-3">1. 검색해서 가져오기</h3>
+            <ItemSearch
+              config={config}
+              initialKeyword={undefined}
+              onSelect={handleSearchResultSelect}
+            />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-gray-500 mb-3">2. 상세 정보 확인 및 확정</h3>
+            <ItemForm
+              config={config}
+              formData={formData}
+              onChange={handleFormChange}
+              onSubmit={handleFormSubmit}
+              onCancel={closeModal}
+              submitText="업데이트"
+            />
+          </div>
+        </div>
+      </BaseModal>
     </div>
        
   );
