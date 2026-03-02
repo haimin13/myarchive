@@ -1,3 +1,10 @@
+DB 마이그레이션 (MariaDB -> Supabase(PostgreSQL))
+Vercel 배포
+훅 사용
+컴포넌트화
+
+=====================================
+
 pagination (더보기 버튼) - search와 category page
 데이터 백업, 복구
 '- single' '- EP' 지우기
@@ -7,3 +14,5 @@ pagination (더보기 버튼) - search와 category page
 유저 닉네임 표시
 친구 기능
 addpage editpage 모달로 리팩토링
+벌크 추가에서 리스트에서 제외 기능
+캐싱해서 로딩시간 줄이기 (데이터 사용량)
