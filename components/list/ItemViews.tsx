@@ -6,27 +6,41 @@ interface Props {
   category: string;
 }
 
+// 카테고리에 따른 이미지 비율 결정
+const getImageRatioClass = (category: string) => {
+  return category === 'games' ? 'aspect-[3/4]' : 'aspect-square';
+};
+
 export function ItemListView({ items, category }: Props) {
+  const ratioClass = getImageRatioClass(category);
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-2"> {/* 간격 축소: space-y-3 -> space-y-2 */}
       {items.map((item) => (
         <Link 
           key={item.selection_id} 
           href={`/${category}/${item.selection_id}`}
-          className="flex items-center bg-white p-3 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100"
+          className="flex items-center bg-white p-2 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100" // 패딩 축소: p-3 -> p-2
         >
-          <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+          {/* 이미지 크기 축소: w-16 -> w-10 */}
+          <div className={`w-10 ${ratioClass} bg-gray-200 rounded-md overflow-hidden flex-shrink-0`}>
             {item.img_dir ? (
               <img src={item.img_dir} alt={item.title} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Img</div>
+              <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]">No Img</div>
             )}
           </div>
           
-          <div className="ml-4 flex-1 min-w-0">
-            <h3 className="font-bold text-gray-900 truncate">{item.title}</h3>
-            <p className="text-sm text-gray-500 truncate">{item.creator}</p>
-            <p className="text-xs text-gray-400 mt-1">
+          {/* 텍스트 영역 */}
+          <div className="ml-3 flex-1 min-w-0 flex flex-col justify-center">
+            {/* 제목과 아티스트 한 줄 배치 및 truncate 적용 */}
+            <div className="flex items-baseline gap-2 w-full">
+              <h3 className="font-bold text-sm text-gray-900 truncate">{item.title}</h3>
+              <span className="text-xs text-gray-500 truncate">{item.creator}</span>
+            </div>
+            
+            {/* 날짜를 아래에 배치 */}
+            <p className="text-[10px] text-gray-400 mt-0.5">
               {getLocalDateString(item.selected_date)}
             </p>
           </div>
@@ -35,8 +49,9 @@ export function ItemListView({ items, category }: Props) {
     </div>
   );
 }
-
 export function ItemGridView({ items, category }: Props) {
+  const ratioClass = getImageRatioClass(category);
+
   return (
     <div className="grid grid-cols-4 gap-4">
       {items.map((item) => (
@@ -45,7 +60,8 @@ export function ItemGridView({ items, category }: Props) {
           href={`/${category}/${item.selection_id}`}
           className="block group"
         >
-          <div className="aspect-square w-full bg-white rounded-xl shadow-sm overflow-hidden mb-2 relative border border-gray-100">
+          {/* 기존 aspect-square 대신 동적 비율 클래스 적용 */}
+          <div className={`${ratioClass} w-full bg-white rounded-xl shadow-sm overflow-hidden mb-2 relative border border-gray-100`}>
             {item.img_dir ? (
               <img 
                 src={item.img_dir} 
