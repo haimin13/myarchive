@@ -29,7 +29,7 @@ export async function searchIGDB(query: string) {
       search "${query}";
       fields name, involved_companies.company.name, involved_companies.developer
         ,cover.url, genres.name, platforms.name, first_release_date, aggregated_rating, rating; 
-      where game_type = (0,2,4,8,9,10) & aggregated_rating_count > 0;
+      where game_type = (0,2,4,8,9,10) & version_parent = null;
       limit 20;
       `
     // 0: main_game, 2: expansion, 4: standalone_expansion, 8: remake, 9: remaster, 10: expanded_game
