@@ -14,7 +14,7 @@ export async function GET(
       return NextResponse.json({ items: [] })
     }
 
-    if (category !== 'albums') {
+    if (category !== 'albums' && category !== 'games') {
       return NextResponse.json(
         { message: "현재 온라인 검색을 지원하지 않는 카테고리입니다." },
         { status: 400 }
@@ -25,8 +25,7 @@ export async function GET(
     return NextResponse.json({ items: results });
   } catch (error: any) {
     console.error("External Search API Route Error:", error.message);
-    const { category } = await params;
-    const status = error.message.includes('iTunes_API_Error') 
+    const status = error.message.includes('External_API_Error') 
     ? parseInt(error.message.split(':')[1]) 
     : 500;
     

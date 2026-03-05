@@ -45,7 +45,7 @@ export async function searchITunes(query: string) {
   });
 
   const formattedItems = Array.from(bestAlbums.values()).map((item: any) => {
-    const highResImage = item.artworkUrl100 
+    const highResImageUrl = item.artworkUrl100 
       ? item.artworkUrl100.replace('100x100bb', '600x600bb') 
       : '';
 
@@ -53,7 +53,7 @@ export async function searchITunes(query: string) {
       id: null,
       title: item.collectionName,
       creator: item.artistName,
-      img_dir: highResImage,
+      img_dir: highResImageUrl,
       release_date: getLocalDateString(item.releaseDate),
     };
   });
