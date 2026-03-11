@@ -53,6 +53,13 @@ export default function AddBulkPage() {
     e.preventDefault();
 
     if (targetIndex === null) return;
+    if (matchedList[targetIndex].matchedItem.title === formData.title &&
+        matchedList[targetIndex].matchedItem.creator === formData.creator){
+      console.log('unchanged');
+      closeModal();
+      return;
+    }
+    
     setMatchedList(prev => {
       const newList = [...prev];
       newList[targetIndex] = {

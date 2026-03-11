@@ -21,3 +21,7 @@ addpage editpage 모달로 리팩토링
 게임 API는 rate limit 처리 없음.
 selected_games에 playtime 추가, playing 추가
 selected에 favorite, 평점, hidden,  review, wish 추가
+game 상세페이지에서도 세로 비율 적용
+home 페이지에서 상단 navigation 만큼 스크롤되는 문제
+온라인 검색으로 선택해도 db 다시 체크하도록
+아이디 unique하게 (supabase)
