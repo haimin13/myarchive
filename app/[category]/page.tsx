@@ -9,6 +9,7 @@ import { ItemListView, ItemGridView } from '@/components/list/ItemViews';
 import BaseModal from '@/components/item/BaseModal';
 import ItemDetail from '@/components/item/ItemDetail';
 import ItemForm from '@/components/item/ItemForm';
+import ItemSearch from '@/components/item/ItemSearch';
 import { getLocalDateString } from '@/lib/simple';
 
 export default function ListPage() {
@@ -23,13 +24,21 @@ export default function ListPage() {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isDetailModalOpen, setDetailModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [addStep, setAddStep] = useState<'search' | 'form'>('search');
+  
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState('');
-  const [formData, setFormData] = useState<any>(() => ({
+  
+  const initialFormData = {
     title: '',
     img_dir: '',
-    creator: ''
-  }));
+    creator: '',
+    selected_date: getLocalDateString(new Date())
+  };
+  const [formData, setFormData] = useState<any>(initialFormData);
+  const [addItemId, setAddItemId] = useState<number | null>(null);
+  
   const router = useRouter();
 
   // ✨ 1. 뷰 모드 상태 추가 ('list' 또는 'grid')
@@ -109,7 +118,7 @@ export default function ListPage() {
     setFormData((prev: any) => ({...prev, [name]: value}));
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedItem) return;
     const res = await fetch(`/api/${category}/${selectedItem.id}`, {
@@ -123,6 +132,33 @@ export default function ListPage() {
       alert('수정되었습니다.');
     } else {
       alert('수정 실패');
+    }
+  };
+
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`/api/${category}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          ...formData,
+          user_id: userId,
+          item_id: addItemId
+        }),
+      });
+
+      if (res.ok) {
+        setAddModalOpen(false);
+        fetchData(userId!);
+        alert(`${config.koreanName} 저장 완료!`);
+      } else {
+        alert('저장 실패;');
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -140,22 +176,56 @@ export default function ListPage() {
   const closeDetailModal = () => {
     setIsEditingDate(false);
     setTempDate('');
-    setFormData({
-      title: '',
-      img_dir: '',
-      creator: ''
-    });
+    setFormData(initialFormData);
     setSelectedItem(null);
     setDetailModalOpen(false);
   };
 
   const closeEditModal = () => {
     setEditModalOpen(false);
-    setFormData({
-      title: '',
-      img_dir: '',
-      creator: ''
+    setFormData(initialFormData);
+  };
+
+  const openAddModal = () => {
+    setFormData(initialFormData);
+    setAddStep('search');
+    setAddItemId(null);
+    setAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setAddModalOpen(false);
+    setFormData(initialFormData);
+  };
+
+  const handleAddSelect = (item: any) => {
+    const newFormData: any = {
+      ...formData,
+      title: item.title,
+      creator: item.creator,
+      img_dir: item.img_dir || '',
+    };
+
+    config.fields.forEach((field: any) => {
+      const dbValue = item[field.name];
+      if (dbValue) {
+        if (field.name === 'release_date') {
+          newFormData[field.name] = getLocalDateString(dbValue);
+        } else {
+          newFormData[field.name] = dbValue;
+        }
+      }
     });
+
+    setFormData(newFormData);
+    setAddItemId(item.id || null);
+    setAddStep('form');
+  };
+
+  const handleDirectEntry = () => {
+    setFormData(initialFormData);
+    setAddItemId(null);
+    setAddStep('form');
   };
 
   useEffect(() => {
@@ -176,6 +246,7 @@ export default function ListPage() {
          onSearch={handleSearch}
          viewMode={viewMode}
          setViewMode={setViewMode}
+         onAddClick={openAddModal}
        />
 
        <div className="p-4">
@@ -225,9 +296,56 @@ export default function ListPage() {
           formData={formData}
           config={config}
           onChange={handleFormChange}
-          onSubmit={handleFormSubmit}
+          onSubmit={handleEditSubmit}
           onCancel={closeEditModal}
+          submitText="수정 완료"
          />}
+       </BaseModal>
+       <BaseModal
+        isOpen={isAddModalOpen}
+        onClose={closeAddModal}
+        title={addStep === 'search' ? `${config.koreanName} 검색 🔎` : `${config.koreanName} 추가 ➕`}
+       >
+         {addStep === 'search' ? (
+           <div>
+             <div className="flex justify-end mb-4">
+               <button
+                 onClick={() => router.push(`/${category}/add/bulk`)}
+                 className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
+               >
+                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                 </svg>
+                 일괄 등록
+               </button>
+             </div>
+             <ItemSearch 
+               config={config} 
+               onSelect={handleAddSelect} 
+             />
+             <div className="border-t pt-4 text-center mt-4">
+              <p className="text-sm text-gray-500 mb-2">원하는 결과가 없나요?</p>
+              <button 
+                onClick={handleDirectEntry}
+                className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
+              >
+                + 직접 입력해서 추가하기
+              </button>
+            </div>
+           </div>
+         ) : (
+           <div className="p-4">
+             <ItemForm
+               formData={formData}
+               config={config}
+               onChange={handleFormChange}
+               onSubmit={handleAddSubmit}
+               onCancel={() => setAddStep('search')}
+               submitText="추가 완료"
+               isAdding={true}
+             />
+           </div>
+         )}
        </BaseModal>
     </div>
   );

@@ -9,10 +9,11 @@ interface Props {
   onSearch: (e: React.FormEvent) => void;
   viewMode: 'list' | 'grid';
   setViewMode: (mode: 'list' | 'grid') => void;
+  onAddClick: () => void;
 }
 
 export default function ListHeader({
-  category, koreanName, keyword, setKeyword, onSearch, viewMode, setViewMode
+  category, koreanName, keyword, setKeyword, onSearch, viewMode, setViewMode, onAddClick
 }: Props) {
   return (
     <div className="bg-white p-4 shadow-sm sticky top-14 z-10">
@@ -20,12 +21,12 @@ export default function ListHeader({
         <h1 className="text-2xl font-bold text-gray-800">
           {koreanName} 보관함 🗂️
         </h1>
-        <Link 
-          href={`/${category}/add`}
+        <button 
+          onClick={onAddClick}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 text-sm"
         >
           + 추가
-        </Link>
+        </button>
       </div>
 
       <div className="flex gap-2">
