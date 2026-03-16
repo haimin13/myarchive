@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
 import ListHeader from '@/components/list/ListHeader';
 import { ItemListView, ItemGridView } from '@/components/list/ItemViews';
+import BaseModal from '@/components/item/BaseModal';
+
 
 export default function ListPage() {
   const params = useParams();
@@ -15,6 +17,8 @@ export default function ListPage() {
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
   const router = useRouter();
 
   // ✨ 1. 뷰 모드 상태 추가 ('list' 또는 'grid')
@@ -88,11 +92,25 @@ export default function ListPage() {
            </div>
          ) : (
            <>
-             {viewMode === 'list' && <ItemListView items={items} category={category} />}
-             {viewMode === 'grid' && <ItemGridView items={items} category={category} />}
+             {viewMode === 'list' && <ItemListView items={items} category={category} onItemClick={(item) => setDetailModalOpen(true)} />}
+             {viewMode === 'grid' && <ItemGridView items={items} category={category} onItemClick={(item) => setDetailModalOpen(true)} />}
            </>
          )}
        </div>
+       <BaseModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        title="상세 보기"
+       >
+        <p>상세 내용</p>
+       </BaseModal>
+       <BaseModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        title="수정하기"
+       >
+        <p>수정 내용</p>
+       </BaseModal>
     </div>
   );
 }

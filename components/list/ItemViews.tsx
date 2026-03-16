@@ -4,6 +4,7 @@ import { getLocalDateString } from '@/lib/simple';
 interface Props {
   items: any[];
   category: string;
+  onItemClick: (item: any) => void;
 }
 
 // 카테고리에 따른 이미지 비율 결정
@@ -11,15 +12,15 @@ const getImageRatioClass = (category: string) => {
   return category === 'games' ? 'aspect-[3/4]' : 'aspect-square';
 };
 
-export function ItemListView({ items, category }: Props) {
+export function ItemListView({ items, category, onItemClick }: Props) {
   const ratioClass = getImageRatioClass(category);
 
   return (
     <div className="space-y-2"> {/* 간격 축소: space-y-3 -> space-y-2 */}
       {items.map((item) => (
-        <Link 
-          key={item.selection_id} 
-          href={`/${category}/${item.selection_id}`}
+        <div 
+          key={item.selection_id}
+          onClick={() => onItemClick(item)}
           className="flex items-center bg-white p-2 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100" // 패딩 축소: p-3 -> p-2
         >
           {/* 이미지 크기 축소: w-16 -> w-10 */}
@@ -44,20 +45,20 @@ export function ItemListView({ items, category }: Props) {
               {getLocalDateString(item.selected_date)}
             </p>
           </div>
-        </Link>
+        </div>
       ))}
     </div>
   );
 }
-export function ItemGridView({ items, category }: Props) {
+export function ItemGridView({ items, category, onItemClick }: Props) {
   const ratioClass = getImageRatioClass(category);
 
   return (
     <div className="grid grid-cols-4 gap-4">
       {items.map((item) => (
-        <Link 
+        <div 
           key={item.selection_id} 
-          href={`/${category}/${item.selection_id}`}
+          onClick={() => onItemClick(item)}
           className="block group"
         >
           {/* 기존 aspect-square 대신 동적 비율 클래스 적용 */}
@@ -82,7 +83,7 @@ export function ItemGridView({ items, category }: Props) {
             <h3 className="font-bold text-gray-900 text-sm truncate">{item.title}</h3>
             <p className="text-xs text-gray-500 truncate">{item.creator}</p>
           </div>
-        </Link>
+        </div>
       ))}
     </div>
   );
