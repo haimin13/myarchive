@@ -98,9 +98,7 @@ export async function GET(
         SELECT
           s.id as selection_id,
           s.selected_date,
-          m.title,
-          m.creator,
-          m.img_dir
+          m.*
         FROM ${config.selectedTable} s
         JOIN ${config.masterTable} m ON s.item_id = m.id
         WHERE s.user_id = $1
@@ -115,9 +113,7 @@ export async function GET(
         SELECT
           s.id as selection_id,
           s.selected_date,
-          m.title,
-          m.creator,
-          m.img_dir
+          m.*
         FROM ${config.selectedTable} s
         JOIN ${config.masterTable} m ON s.item_id = m.id
         WHERE s.user_id = $1

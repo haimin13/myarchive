@@ -1,4 +1,6 @@
 // 반복되는 디자인을 한방에 해결해주는 컴포넌트
+import { getLocalDateString } from '@/lib/simple';
+
 export default function InputField ({ field, value, onChange, isReadOnly }: any) {
   // 1. 날짜 필드인지 확인
   const isDate = field.name === 'release_date' || field.name === 'selected_date';
@@ -14,12 +16,11 @@ export default function InputField ({ field, value, onChange, isReadOnly }: any)
       </label>
       <input
         type={inputType}
-        value={value || ''}
+        value={isDate && value ? getLocalDateString(value) : (value || '')}
         onChange={(e) => onChange(field.name, e.target.value)}
         placeholder={field.placeholder || ''}
         required={field.required}
         readOnly={isReadOnly}
-        // ✨ 스타일 로직 한 곳으로 통합!
         className={`
           w-full p-3 border rounded-lg outline-none
           ${isReadOnly 

@@ -74,7 +74,6 @@ export default function DetailPage() {
       <ItemDetail 
         item={item}
         config={config}
-        onBack={() => router.push(`/${category}`)}
         onEdit={() => router.push(`/${category}/${id}/edit`)}
         onDelete={handleDelete}
         
