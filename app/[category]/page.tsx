@@ -33,7 +33,6 @@ export default function ListPage() {
   const router = useRouter();
 
   // ✨ 1. 뷰 모드 상태 추가 ('list' 또는 'grid')
-  // 기본값은 'list'로 하되, 원하시면 'grid'로 바꿔도 됩니다.
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
 
   useEffect(() => {
@@ -196,7 +195,7 @@ export default function ListPage() {
        </div>
        <BaseModal
         isOpen={isDetailModalOpen}
-        onClose={() => setDetailModalOpen(false)}
+        onClose={closeDetailModal}
         title="상세 보기"
        >
         {selectedItem &&

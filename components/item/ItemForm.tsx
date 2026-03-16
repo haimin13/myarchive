@@ -23,7 +23,7 @@ export default function ItemForm({
   
 
   return (
-    <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+    <div>
       <h1 className="text-xl font-bold mb-6 text-gray-800">
         {config.koreanName} {submitText === '수정 완료' ? '수정하기 ✏️' : '추가하기 ➕'}
       </h1>

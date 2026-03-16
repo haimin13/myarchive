@@ -22,10 +22,9 @@ export default function ItemDetail({
   isEditingDate, tempDate, onTempDateChange, onDateEditStart, onDateEditCancel, onDateSubmit
 }: Props) {
   return (
-    <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+    <div>
       {/* 상단 툴바 */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-white">
-        
+      <div className="flex items-center justify-end">
         <div className="flex gap-2">
           <button onClick={onEdit} className="text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition text-sm font-bold">
             수정
