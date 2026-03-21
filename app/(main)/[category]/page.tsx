@@ -9,8 +9,8 @@ import BaseModal from '@/components/item/BaseModal';
 import ItemDetail from '@/components/item/ItemDetail';
 import ItemForm from '@/components/item/ItemForm';
 import ItemSearch from '@/components/item/ItemSearch';
-import { getLocalDateString } from '@/lib/simple';
-import { useAuth } from '@/components/AuthProvider';
+import { getLocalDateString } from '@/lib/utility';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function ListPage() {
   const params = useParams();
@@ -26,10 +26,10 @@ export default function ListPage() {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [addStep, setAddStep] = useState<'search' | 'form'>('search');
-  
+
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState('');
-  
+
   const initialFormData = {
     title: '',
     img_dir: '',
@@ -38,7 +38,7 @@ export default function ListPage() {
   };
   const [formData, setFormData] = useState<any>(initialFormData);
   const [addItemId, setAddItemId] = useState<number | null>(null);
-  
+
   const router = useRouter();
 
   // ✨ 1. 뷰 모드 상태 추가 ('list' 또는 'grid')
@@ -75,14 +75,14 @@ export default function ListPage() {
   const handleDelete = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/${category}/${selectedItem.id}`, {
-        method: 'DELETE'
+      method: 'DELETE'
     });
 
     if (res.ok) {
-        setDetailModalOpen(false);
-        fetchData(userId!);
+      setDetailModalOpen(false);
+      fetchData(userId!);
     } else {
-        alert('삭제 실패');
+      alert('삭제 실패');
     }
   };
 
@@ -113,7 +113,7 @@ export default function ListPage() {
   };
 
   const handleFormChange = (name: string, value: string) => {
-    setFormData((prev: any) => ({...prev, [name]: value}));
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const handleEditSubmit = async (e: React.FormEvent) => {
@@ -140,7 +140,7 @@ export default function ListPage() {
     try {
       const res = await fetch(`/api/${category}`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           user_id: userId,
@@ -231,42 +231,42 @@ export default function ListPage() {
       fetchData(userId);
     }
   }, [category, config, userId]);
-  
+
   if (!config) return <div>잘못된 접근</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-       <ListHeader 
-         category={category}
-         koreanName={config.koreanName}
-         keyword={keyword}
-         setKeyword={setKeyword}
-         onSearch={handleSearch}
-         viewMode={viewMode}
-         setViewMode={setViewMode}
-         onAddClick={openAddModal}
-       />
+      <ListHeader
+        category={category}
+        koreanName={config.koreanName}
+        keyword={keyword}
+        setKeyword={setKeyword}
+        onSearch={handleSearch}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        onAddClick={openAddModal}
+      />
 
-       <div className="p-4">
-         {loading ? (
-           <div className="text-center py-10 text-gray-500">로딩 중...</div>
-         ) : items.length === 0 ? (
-           <div className="text-center py-10 text-gray-500">
-             아직 수집한 아이템이 없습니다.<br/>
-             우측 상단 버튼을 눌러 추가해보세요!
-           </div>
-         ) : (
-           <>
-             {viewMode === 'list' && <ItemListView items={items} category={category} onItemClick={handleItemClick} />}
-             {viewMode === 'grid' && <ItemGridView items={items} category={category} onItemClick={handleItemClick} />}
-           </>
-         )}
-       </div>
-       <BaseModal
+      <div className="p-4">
+        {loading ? (
+          <div className="text-center py-10 text-gray-500">로딩 중...</div>
+        ) : items.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">
+            아직 수집한 아이템이 없습니다.<br />
+            우측 상단 버튼을 눌러 추가해보세요!
+          </div>
+        ) : (
+          <>
+            {viewMode === 'list' && <ItemListView items={items} category={category} onItemClick={handleItemClick} />}
+            {viewMode === 'grid' && <ItemGridView items={items} category={category} onItemClick={handleItemClick} />}
+          </>
+        )}
+      </div>
+      <BaseModal
         isOpen={isDetailModalOpen}
         onClose={closeDetailModal}
         title="상세 보기"
-       >
+      >
         {selectedItem &&
           <ItemDetail
             item={selectedItem}
@@ -284,12 +284,12 @@ export default function ListPage() {
             onDateSubmit={handleDateUpdate}
           />
         }
-       </BaseModal>
-       <BaseModal
+      </BaseModal>
+      <BaseModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
         title="수정하기"
-       >
+      >
         {selectedItem && <ItemForm
           formData={formData}
           config={config}
@@ -297,54 +297,54 @@ export default function ListPage() {
           onSubmit={handleEditSubmit}
           onCancel={closeEditModal}
           submitText="수정 완료"
-         />}
-       </BaseModal>
-       <BaseModal
+        />}
+      </BaseModal>
+      <BaseModal
         isOpen={isAddModalOpen}
         onClose={closeAddModal}
         title={addStep === 'search' ? `${config.koreanName} 검색 🔎` : `${config.koreanName} 추가 ➕`}
-       >
-         {addStep === 'search' ? (
-           <div>
-             <div className="flex justify-end mb-4">
-               <button
-                 onClick={() => router.push(`/${category}/add/bulk`)}
-                 className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
-               >
-                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                 </svg>
-                 일괄 등록
-               </button>
-             </div>
-             <ItemSearch 
-               config={config} 
-               onSelect={handleAddSelect} 
-             />
-             <div className="border-t pt-4 text-center mt-4">
+      >
+        {addStep === 'search' ? (
+          <div>
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => router.push(`/${category}/add/bulk`)}
+                className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                일괄 등록
+              </button>
+            </div>
+            <ItemSearch
+              config={config}
+              onSelect={handleAddSelect}
+            />
+            <div className="border-t pt-4 text-center mt-4">
               <p className="text-sm text-gray-500 mb-2">원하는 결과가 없나요?</p>
-              <button 
+              <button
                 onClick={handleDirectEntry}
                 className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
               >
                 + 직접 입력해서 추가하기
               </button>
             </div>
-           </div>
-         ) : (
-           <div className="p-4">
-             <ItemForm
-               formData={formData}
-               config={config}
-               onChange={handleFormChange}
-               onSubmit={handleAddSubmit}
-               onCancel={() => setAddStep('search')}
-               submitText="추가 완료"
-               isAdding={true}
-             />
-           </div>
-         )}
-       </BaseModal>
+          </div>
+        ) : (
+          <div className="p-4">
+            <ItemForm
+              formData={formData}
+              config={config}
+              onChange={handleFormChange}
+              onSubmit={handleAddSubmit}
+              onCancel={() => setAddStep('search')}
+              submitText="추가 완료"
+              isAdding={true}
+            />
+          </div>
+        )}
+      </BaseModal>
     </div>
   );
 }

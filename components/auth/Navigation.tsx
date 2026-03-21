@@ -1,21 +1,32 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { CATEGORY_CONFIG } from '@/app/constants'
+import { CATEGORY_CONFIG } from '@/app/constants';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Navigation() {
+  const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const isHidden = 
     pathname === '/login' ||
     pathname === '/register' ||
+    pathname === '/forgot-password' ||
+    pathname === '/reset-password' ||
     pathname.endsWith('/add') ||
     pathname.endsWith('/edit');
 
   if (isHidden) return null;
   const closeMenu = () => setIsOpen(false);
+
+  const handleLogout = async () => {
+    if(confirm('로그아웃 하시겠습니까?')) {
+      await logout();
+      location.href = '/login';
+    }
+  };
 
   return (
     <>
@@ -75,13 +86,7 @@ export default function Navigation() {
           <div className="my-2 border-t border-gray-100"></div>
 
           <button
-            onClick={() => {
-              if(confirm('로그아웃 하시겠습니까?')) {
-                localStorage.removeItem('user');
-                sessionStorage.removeItem('user');
-                location.href = '/login';
-              }
-            }}
+            onClick={handleLogout}
             className="w-full text-left px-4 py-3 rounded-lg hover:bg-red-50 text-red-500 font-medium"
           >
            🚪 로그아웃

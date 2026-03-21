@@ -1,13 +1,13 @@
 // 위치: /components/item/ItemDetail.tsx
 import React from 'react';
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 
 interface Props {
   item: any;
   config: any;
   onEdit: () => void;
   onDelete: () => void;
-  
+
   // 날짜 수정 관련 Props
   isEditingDate: boolean;
   tempDate: string;
@@ -47,15 +47,15 @@ export default function ItemDetail({
       {/* 내용 영역 */}
       <div className="p-8 pt-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">{item.title}</h1>
-        
+
         {/* 등록일 섹션 */}
         <div className="text-sm text-gray-500 mb-8 border-b pb-4 flex items-center justify-center h-8">
           <span className="mr-2">등록일:</span>
 
           {isEditingDate ? (
             <div className="flex items-center gap-2">
-              <input 
-                type="date" 
+              <input
+                type="date"
                 value={tempDate}
                 onChange={(e) => onTempDateChange(e.target.value)}
                 className="border border-gray-300 p-1 rounded text-sm bg-white"
@@ -66,7 +66,7 @@ export default function ItemDetail({
           ) : (
             <>
               <span>{getLocalDateString(item.selected_date)}</span>
-              <button 
+              <button
                 onClick={onDateEditStart}
                 className="ml-2 text-gray-400 hover:text-blue-500 transition"
                 title="날짜 수정"

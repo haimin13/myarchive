@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 import ItemDetail from '@/components/item/ItemDetail';
 
 export default function DetailPage() {
@@ -39,13 +39,13 @@ export default function DetailPage() {
   const handleDelete = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/${category}/${id}`, {
-        method: 'DELETE'
+      method: 'DELETE'
     });
 
     if (res.ok) {
-        router.push(`/${category}`);
+      router.push(`/${category}`);
     } else {
-        alert('삭제 실패');
+      alert('삭제 실패');
     }
   };
 
@@ -71,12 +71,12 @@ export default function DetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
-      <ItemDetail 
+      <ItemDetail
         item={item}
         config={config}
         onEdit={() => router.push(`/${category}/${id}/edit`)}
         onDelete={handleDelete}
-        
+
         isEditingDate={isEditingDate}
         tempDate={tempDate}
         onTempDateChange={setTempDate}
@@ -88,5 +88,5 @@ export default function DetailPage() {
         onDateSubmit={handleDateUpdate}
       />
     </div>
-    );
+  );
 }

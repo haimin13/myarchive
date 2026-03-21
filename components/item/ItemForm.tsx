@@ -1,6 +1,6 @@
 import React from 'react';
-import InputField from '@/components/InputField';
-import { getLocalDateString } from '@/lib/simple';
+import InputField from '@/components/auth/InputField';
+import { getLocalDateString } from '@/lib/utility';
 
 interface Props {
   config: any;
@@ -12,7 +12,7 @@ interface Props {
   isAdding?: boolean;
 }
 
-export default function ItemForm({ 
+export default function ItemForm({
   config, formData, onChange, onSubmit, onCancel, submitText = "저장", isAdding = false
 }: Props) {
   const allFields = config ? [
@@ -31,23 +31,23 @@ export default function ItemForm({
         <div>
           {formData.img_dir && (
             <div className="mb-4 text-center">
-              <img 
-                src={formData.img_dir} 
-                alt="미리보기" 
+              <img
+                src={formData.img_dir}
+                alt="미리보기"
                 className="h-32 object-contain mx-auto rounded border"
                 onError={(e) => (e.currentTarget.style.display = 'none')}
               />
             </div>
           )}
         </div>
-        
+
         {allFields.map((field: any) => (
           <InputField
             key={field.name}
             field={field}
             value={formData[field.name]}
             onChange={onChange}
-            isReadOnly={false} 
+            isReadOnly={false}
           />
         ))}
 

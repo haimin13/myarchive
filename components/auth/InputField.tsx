@@ -1,10 +1,10 @@
 // 반복되는 디자인을 한방에 해결해주는 컴포넌트
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 
-export default function InputField ({ field, value, onChange, isReadOnly }: any) {
+export default function InputField({ field, value, onChange, isReadOnly }: any) {
   // 1. 날짜 필드인지 확인
   const isDate = field.name === 'release_date' || field.name === 'selected_date';
-  
+
   // 2. 입력창 타입 결정
   const inputType = isDate ? 'date' : (field.type || 'text');
 
@@ -23,8 +23,8 @@ export default function InputField ({ field, value, onChange, isReadOnly }: any)
         readOnly={isReadOnly}
         className={`
           w-full p-3 border rounded-lg outline-none
-          ${isReadOnly 
-            ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+          ${isReadOnly
+            ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
             : 'focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400'
           }
         `}

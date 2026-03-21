@@ -3,12 +3,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation'; 
+import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { parseCSV } from '@/lib/simple';
+import { parseCSV } from '@/lib/utility';
 import { useBulkMatch } from '@/hooks/useBulkMatch';
-import { getLocalDateString } from '@/lib/simple';
-import { useAuth } from '@/components/AuthProvider';
+import { getLocalDateString } from '@/lib/utility';
+import { useAuth } from '@/hooks/useAuth';
 
 import BulkInputForm from '@/components/bulk/BulkInputForm';
 import ParsedTable from '@/components/bulk/ParsedTable';
@@ -33,12 +33,12 @@ export default function AddBulkPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
 
-  const { 
+  const {
     matchedList,
     setMatchedList,
     isMatching,
     matchProgress,
-    startMatching 
+    startMatching
   } = useBulkMatch(category);
 
   const [formData, setFormData] = useState<any>(() => ({
@@ -48,7 +48,7 @@ export default function AddBulkPage() {
   }));
 
   const handleFormChange = (name: string, value: string) => {
-    setFormData((prev: any) => ({...prev, [name]: value}));
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -56,17 +56,17 @@ export default function AddBulkPage() {
 
     if (targetIndex === null) return;
     if (matchedList[targetIndex].matchedItem.title === formData.title &&
-        matchedList[targetIndex].matchedItem.creator === formData.creator){
+      matchedList[targetIndex].matchedItem.creator === formData.creator) {
       console.log('unchanged');
       closeModal();
       return;
     }
-    
+
     setMatchedList(prev => {
       const newList = [...prev];
       newList[targetIndex] = {
         ...newList[targetIndex],
-        matchedItem: {...formData },
+        matchedItem: { ...formData },
         matchStatus: 'manual'
       };
 
@@ -78,7 +78,7 @@ export default function AddBulkPage() {
 
   const closeModal = () => {
     setTargetIndex(null);
-    setFormData({title: '', img_dir: '', creator: ''});
+    setFormData({ title: '', img_dir: '', creator: '' });
     setIsModalOpen(false);
   }
 
@@ -116,7 +116,7 @@ export default function AddBulkPage() {
       handleSearchResultSelect(clickedItem.matchedItem);
     }
     else {
-      setFormData({title: '', img_dir: '', creator: ''});
+      setFormData({ title: '', img_dir: '', creator: '' });
     }
     setIsModalOpen(true);
   }
@@ -193,11 +193,11 @@ export default function AddBulkPage() {
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 p-6">
       <div className="w-full max-w-5xl bg-white p-8 rounded-lg shadow-md">
-      {/*상단 헤더 영역*/}
+        {/*상단 헤더 영역*/}
         <div className="flex items-center justify-between mb-8 pb-4 border-b">
           <div className="flex items-center">
-            <button 
-              onClick={() => router.push(`/${category}/add`)} 
+            <button
+              onClick={() => router.push(`/${category}/add`)}
               className="mr-4 text-gray-500 hover:text-black transition-colors p-1"
               aria-label="일반 등록으로 돌아가기"
             >
@@ -211,7 +211,7 @@ export default function AddBulkPage() {
           </div>
         </div>
         {/* 1. 입력 폼 컴포넌트 */}
-        <BulkInputForm 
+        <BulkInputForm
           file={file}
           onFileChange={handleFileChange}
           textInput={textInput}
@@ -223,7 +223,7 @@ export default function AddBulkPage() {
           isMatching={isMatching}
           matchProgress={matchProgress}
         />
-        
+
         {!parsedList || parsedList.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
             CSV 파일을 업로드하거나 텍스트를 입력한 뒤 <b>파싱!</b> 버튼을 눌러주세요.
@@ -231,18 +231,18 @@ export default function AddBulkPage() {
         ) : (
           <div className="flex flex-col gap-6">
             {/* 2. 파싱 테이블 컴포넌트 */}
-            <ParsedTable 
-              data={parsedList} 
-              config={config} 
-              isOpen={isParsedOpen} 
-              onToggle={() => setIsParsedOpen(!isParsedOpen)} 
+            <ParsedTable
+              data={parsedList}
+              config={config}
+              isOpen={isParsedOpen}
+              onToggle={() => setIsParsedOpen(!isParsedOpen)}
             />
 
             {/* 3. 매칭 결과 컴포넌트 */}
-            <MatchedTable 
-              data={matchedList} 
-              isMatching={isMatching} 
-              matchProgress={matchProgress} 
+            <MatchedTable
+              data={matchedList}
+              isMatching={isMatching}
+              matchProgress={matchProgress}
               onItemClick={handleMatchedItemClick}
             />
           </div>
@@ -289,6 +289,6 @@ export default function AddBulkPage() {
         </div>
       </BaseModal>
     </div>
-       
+
   );
 }

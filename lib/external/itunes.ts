@@ -1,11 +1,11 @@
 // lib/external/itunes.ts
-import { getLocalDateString } from "../simple";
+import { getLocalDateString } from "../utility";
 
 export async function searchITunes(query: string) {
   const term = encodeURIComponent(query).replace(/%20/g, '+');
-  
+
   const endpoint = `https://itunes.apple.com/search?term=${term}&media=music&limit=50&country=KR&lang=ko_kr`;
-  
+
   const res = await fetch(endpoint);
   if (!res.ok) {
     throw new Error(`iTunes_API_ERROR:${res.status}`);
@@ -32,7 +32,7 @@ export async function searchITunes(query: string) {
       // 2. [트랙 수 대결] 더 많은 트랙을 가진 게 진짜 앨범 (싱글 vs 정규)
       if (currentCount > existingCount) {
         bestAlbums.set(key, item);
-      } 
+      }
       // 3. [날짜 대결] 트랙 수가 같다면? (같은 앨범 내 수록곡들끼리의 싸움)
       else if (currentCount === existingCount) {
         // ✨ 더 '최신' 날짜를 가진 놈이 승리!
@@ -45,8 +45,8 @@ export async function searchITunes(query: string) {
   });
 
   const formattedItems = Array.from(bestAlbums.values()).map((item: any) => {
-    const highResImageUrl = item.artworkUrl100 
-      ? item.artworkUrl100.replace('100x100bb', '600x600bb') 
+    const highResImageUrl = item.artworkUrl100
+      ? item.artworkUrl100.replace('100x100bb', '600x600bb')
       : '';
 
     return {

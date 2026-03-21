@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { executeQuery, pool } from '@/lib/db';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{category: string }> }
+  { params }: { params: Promise<{ category: string }> }
 ) {
 
   const client = await pool.connect();
@@ -13,7 +13,7 @@ export async function POST(
     const { category } = await params;
     const config = CATEGORY_CONFIG[category];
     if (!config) {
-      return NextResponse.json({message: '지원하지 않는 카테고리입니다.'}, {status: 400});
+      return NextResponse.json({ message: '지원하지 않는 카테고리입니다.' }, { status: 400 });
     }
 
     const body = await request.json();
@@ -27,8 +27,8 @@ export async function POST(
       if (!creator || !creator.trim()) return NextResponse.json({ message: '창작자를 입력해주세요.' }, { status: 400 });
     }
     if (!user_id) return NextResponse.json({ message: '로그인 정보가 없습니다.' }, { status: 401 });
-    
-    
+
+
     let final
     // 동적 SQL 만들기
     try {
@@ -46,15 +46,15 @@ export async function POST(
 
         finalItemId = res.rows[0].id;
       }
-      
+
       const insertRelationSql = `
         INSERT INTO ${config.selectedTable} (user_id, item_id, selected_date) 
         VALUES ($1, $2, $3)
       `;
       await client.query(insertRelationSql, [user_id, finalItemId, selected_date]);
       await client.query('COMMIT');
-   
-      return NextResponse.json({message:'저장 완료!', id: finalItemId}, { status: 201 });
+
+      return NextResponse.json({ message: '저장 완료!', id: finalItemId }, { status: 201 });
 
     } catch (dbError) {
       console.error('DB Error:', dbError);
@@ -67,31 +67,31 @@ export async function POST(
 
   } catch (serverError) {
     console.error('API Error:', serverError);
-    return NextResponse.json({message: '서버 에러가 발생했습니다.'}, {status: 500});
+    return NextResponse.json({ message: '서버 에러가 발생했습니다.' }, { status: 500 });
   }
 }
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise< {category: string }> }
+  { params }: { params: Promise<{ category: string }> }
 ) {
   try {
     const { category } = await params;
     const config = CATEGORY_CONFIG[category];
 
     if (!config) {
-      return NextResponse.json({message: '지원하지 않는 카테고리입니다.'}, {status: 400});
+      return NextResponse.json({ message: '지원하지 않는 카테고리입니다.' }, { status: 400 });
     }
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
     const userId = searchParams.get('userId');
-    
+
     let sql = '';
     let values: any[] = [];
 
 
     if (!userId) {
-      return NextResponse.json({message: '유저 ID가 필요합니다.'}, {status:400});
+      return NextResponse.json({ message: '유저 ID가 필요합니다.' }, { status: 400 });
     }
     if (query) {
       sql = `
@@ -121,11 +121,11 @@ export async function GET(
       `;
       values = [userId]
     }
-    
+
     const results = await executeQuery(sql, values);
-    return NextResponse.json({items:results});
+    return NextResponse.json({ items: results });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({message:'서버 에러'}, {status:500});
+    return NextResponse.json({ message: '서버 에러' }, { status: 500 });
   }
 }

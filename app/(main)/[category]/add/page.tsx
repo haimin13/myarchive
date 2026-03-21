@@ -5,9 +5,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/simple';
-import InputField from '@/components/InputField';
-import { useAuth } from '@/components/AuthProvider';
+import { getLocalDateString } from '@/lib/utility';
+import InputField from '@/components/auth/InputField';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function AddPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function AddPage() {
     selected_date: getLocalDateString(new Date()),
     creator: ''
   }));
-  
+
   const userId = user?.id;
 
   // 검색 관련 상태
@@ -51,23 +51,23 @@ export default function AddPage() {
     setLoading(true);
     try {
       const endpoint = searchMode === 'internal'
-    ? `/api/${category}/search?q=${keyword}`
-    : `/api/external/${category}?q=${keyword}`;
+        ? `/api/${category}/search?q=${keyword}`
+        : `/api/external/${category}?q=${keyword}`;
 
-    const res = await fetch(endpoint);
-    const data = await res.json();
+      const res = await fetch(endpoint);
+      const data = await res.json();
 
-    if (!res.ok) {
-      alert(data.message || '검색 중 오류가 발생했습니다.');
-      setSearchResults([]);
-      return;
-    }
-    setSearchResults(data.items || []);
-    console.log(data.items);
-    
-          
-    } catch(err)  {
-        console.error(err);
+      if (!res.ok) {
+        alert(data.message || '검색 중 오류가 발생했습니다.');
+        setSearchResults([]);
+        return;
+      }
+      setSearchResults(data.items || []);
+      console.log(data.items);
+
+
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export default function AddPage() {
       if (dbValue) {
         if (field.name === 'release_date') {
           newFormData[field.name] = getLocalDateString(dbValue);
-        } 
+        }
         // (B) 일반 필드인 경우: 값 그대로 넣기 (genre, platform 등)
         else {
           newFormData[field.name] = dbValue;
@@ -135,7 +135,7 @@ export default function AddPage() {
     try {
       const res = await fetch(`/api/${category}`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           user_id: userId,
@@ -155,7 +155,7 @@ export default function AddPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   useEffect(() => {
     if (!config) {
       alert('존재하지 않는 카테고리입니다.');
@@ -173,14 +173,14 @@ export default function AddPage() {
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        
+
         {!showForm ? (
           /* 검색 화면 (SCENE 1) */
           <div>
             <div className="flex items-center justify-between mb-6 border-b pb-4">
               <div className="flex items-center">
-                <button 
-                  onClick={() => router.push(`/${category}`)} 
+                <button
+                  onClick={() => router.push(`/${category}`)}
                   className="mr-3 text-gray-500 hover:text-black"
                   aria-label="뒤로 가기"
                 >
@@ -193,8 +193,8 @@ export default function AddPage() {
                 </h1>
               </div>
               <button
-                 onClick={() => router.push(`/${category}/add/bulk`)}
-                 className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
+                onClick={() => router.push(`/${category}/add/bulk`)}
+                className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -207,26 +207,24 @@ export default function AddPage() {
             <div className="flex border-b mb-6">
               <button
                 onClick={() => handleTabChange('internal')}
-                className={`flex-1 pb-3 font-bold transition ${
-                  searchMode === 'internal' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
+                className={`flex-1 pb-3 font-bold transition ${searchMode === 'internal'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-400 hover:text-gray-600'
+                  }`}
               >
                 DB 검색
               </button>
               <button
                 onClick={() => handleTabChange('external')}
-                className={`flex-1 pb-3 font-bold transition ${
-                  searchMode === 'external' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
+                className={`flex-1 pb-3 font-bold transition ${searchMode === 'external'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-400 hover:text-gray-600'
+                  }`}
               >
                 온라인 검색
               </button>
             </div>
-            
+
             <form onSubmit={handleSearch} className="flex gap-2 mb-6">
               <input
                 type="text"
@@ -236,8 +234,8 @@ export default function AddPage() {
                 className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
                 autoFocus
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="bg-blue-600 text-white px-4 rounded-lg font-bold hover:bg-blue-700"
               >
                 검색
@@ -246,19 +244,19 @@ export default function AddPage() {
 
             <div className="space-y-2 mb-6 max-h-80 overflow-y-auto">
               {loading && <div className="text-center text-gray-500">검색 중...</div>}
-              
+
               {!loading && searchResults.length > 0 && searchResults.map((item: any, index: number) => (
-                <div 
+                <div
                   key={item.id || index}
                   onClick={() => handleSelect(item)}
                   className="flex items-center p-3 border rounded-lg hover:bg-blue-50 cursor-pointer transition gap-3"
                 >
                   <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 overflow-hidden">
-                     {item.img_dir ? (
-                       <img src={item.img_dir} className="w-full h-full object-cover" alt="" />
-                     ) : (
-                       <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">No Img</div>
-                     )}
+                    {item.img_dir ? (
+                      <img src={item.img_dir} className="w-full h-full object-cover" alt="" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">No Img</div>
+                    )}
                   </div>
                   <div>
                     <div className="font-bold text-gray-800">{item.title}</div>
@@ -266,7 +264,7 @@ export default function AddPage() {
                   </div>
                 </div>
               ))}
-              
+
               {!loading && keyword && searchResults.length === 0 && (
                 <div className="text-center text-gray-500 py-4">검색 결과가 없습니다.</div>
               )}
@@ -274,7 +272,7 @@ export default function AddPage() {
 
             <div className="border-t pt-4 text-center">
               <p className="text-sm text-gray-500 mb-2">원하는 결과가 없나요?</p>
-              <button 
+              <button
                 onClick={handleDirectEntry}
                 className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
               >
@@ -283,7 +281,7 @@ export default function AddPage() {
             </div>
           </div>
         ) : (
-          
+
           /* 입력 폼 (SCENE 2) */
           <div>
             <div className="flex items-center mb-6 border-b pb-4">
@@ -301,9 +299,9 @@ export default function AddPage() {
               <div>
                 {formData.img_dir && (
                   <div className="mt-2 text-center">
-                    <img 
-                      src={formData.img_dir} 
-                      alt="미리보기" 
+                    <img
+                      src={formData.img_dir}
+                      alt="미리보기"
                       className="h-32 object-contain mx-auto rounded border"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
@@ -311,16 +309,16 @@ export default function AddPage() {
                 )}
               </div>
               {allFields.map((field) => (
-               <InputField
-                 key={field.name}
-                 field={field}
-                 value={formData[field.name]}
-                 onChange={handleChange}
-                 // itemId가 있으면(검색선택) 수정 불가. 단, isReadOnly 예외 조건이 필요하면 여기서 추가
-                 isReadOnly={!!itemId} 
-               />
-             ))}
-              
+                <InputField
+                  key={field.name}
+                  field={field}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  // itemId가 있으면(검색선택) 수정 불가. 단, isReadOnly 예외 조건이 필요하면 여기서 추가
+                  isReadOnly={!!itemId}
+                />
+              ))}
+
               {/* [공통 필드 3] 날짜 선택 (이건 항상 내 기록이므로 수정 가능!) */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">
@@ -340,11 +338,10 @@ export default function AddPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-3 mt-4 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-lg ${
-                  isSubmitting
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                }`}
+                className={`w-full py-3 mt-4 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-lg ${isSubmitting
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
               >
                 {isSubmitting ? '저장 중...' : '저장하기'}
               </button>

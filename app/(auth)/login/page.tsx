@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [userId, setUserId] = useState('');
@@ -18,13 +18,13 @@ export default function LoginPage() {
 
     const res = await fetch('api/login', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({user_id: userId, password, rememberMe}),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, password, rememberMe }),
     });
 
     if (res.ok) {
       const data = await res.json();
-      
+
       // 전역 상태 업데이트 (쿠키는 서버에서 이미 설정됨)
       login(data.user);
 
@@ -72,7 +72,7 @@ export default function LoginPage() {
             type="submit"
             className="w-full py-3 mt-6 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
           >
-          로그인
+            로그인
           </button>
         </form>
 
@@ -81,13 +81,13 @@ export default function LoginPage() {
           <p className="text-sm text-gray-600">
             비밀번호를 잊으셨나요?{' '}
             <Link href="/forgot-password" title="비밀번호 찾기" className="text-blue-600 hover:underline font-bold">
-            비밀번호 찾기
+              비밀번호 찾기
             </Link>
           </p>
           <p className="text-sm text-gray-600">
             아직 계정이 없으신가요?{' '}
             <Link href="/register" className="text-blue-600 hover:underline font-bold">
-            회원가입 하러가기
+              회원가입 하러가기
             </Link>
           </p>
         </div>

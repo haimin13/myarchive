@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 import ItemForm from '@/components/item/ItemForm';
 
 export default function EditPage() {
@@ -16,8 +16,8 @@ export default function EditPage() {
 
   const [formData, setFormData] = useState<any>({
     title: '',
-    img_dir:'',
-    creator:'',
+    img_dir: '',
+    creator: '',
   });
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +30,7 @@ export default function EditPage() {
         if (data.item) {
           // DB 데이터를 폼에 넣을 때 날짜 포맷팅 수행
           const others = { ...data.item };
-          
+
           // release_date가 있으면 YYYY-MM-DD로 변환해서 인풋창에 보여줌
           if (others.release_date) {
             others.release_date = getLocalDateString(others.release_date)
@@ -53,7 +53,7 @@ export default function EditPage() {
   }, [category, id, config, router]);
 
   const handleChange = (name: string, value: string) => {
-    setFormData((prev: any) => ({...prev, [name]: value}));
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,7 +61,7 @@ export default function EditPage() {
 
     const res = await fetch(`/api/${category}/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
 
@@ -76,7 +76,7 @@ export default function EditPage() {
   if (!config || loading) return <div>로딩 중...</div>;
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 p-6">
-      <ItemForm 
+      <ItemForm
         config={config}
         formData={formData}
         onChange={handleChange}

@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 
 export async function GET(
   request: Request,
-  {params}: {params: Promise<{category:string; id:string}>}
+  { params }: { params: Promise<{ category: string; id: string }> }
 ) {
   try {
-    const {category, id} = await params;
+    const { category, id } = await params;
     const config = CATEGORY_CONFIG[category];
 
-    if(!config) {
-      return NextResponse.json({message:"카테고리 없음"}, {status: 400});
+    if (!config) {
+      return NextResponse.json({ message: "카테고리 없음" }, { status: 400 });
     }
     const sql = `
       SELECT 
@@ -41,13 +41,13 @@ export async function GET(
 
 export async function DELETE(
   request: Request,
-  {params}: {params: Promise<{category: string, id: string}>}
+  { params }: { params: Promise<{ category: string, id: string }> }
 ) {
-  const {category, id} = await params;
+  const { category, id } = await params;
   const config = CATEGORY_CONFIG[category];
 
   if (!config) {
-    return NextResponse.json({message: "카테고리 없음"}, {status: 400});
+    return NextResponse.json({ message: "카테고리 없음" }, { status: 400 });
   }
   const sql = `DELETE FROM ${config.selectedTable} WHERE id = $1`;
   await executeQuery(sql, [id]);
@@ -57,14 +57,14 @@ export async function DELETE(
 
 export async function PUT(
   request: Request,
-    { params }: {params: Promise<{ category: string, id: string}>}
+  { params }: { params: Promise<{ category: string, id: string }> }
 ) {
   const { category, id } = await params;
   const config = CATEGORY_CONFIG[category];
   const body = await request.json();
-  const { 
-    selected_date, 
-    user_id, 
+  const {
+    selected_date,
+    user_id,
     id: bodyId,
     selection_id,
     ...masterData
@@ -87,7 +87,7 @@ export async function PUT(
         const masterId = rows[0].item_id;
         const keys = Object.keys(masterData);
         const values = Object.values(masterData);
-        
+
         const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
         const idIndex = keys.length + 1
 
@@ -103,30 +103,30 @@ export async function PUT(
   }
 }
 
-  // const {title, creator, img_dir, user_id, ...others } = body;
+// const {title, creator, img_dir, user_id, ...others } = body;
 
-  // if (!title || !title.trim()) {
-  //     return NextResponse.json({ message: '제목을 입력해주세요.' }, { status: 400 });
-  //   }
-  // if (!creator || !creator.trim()) {
-  //   return NextResponse.json({ message: '창작자를 입력해주세요.' }, { status: 400 });
-  // }
+// if (!title || !title.trim()) {
+//     return NextResponse.json({ message: '제목을 입력해주세요.' }, { status: 400 });
+//   }
+// if (!creator || !creator.trim()) {
+//   return NextResponse.json({ message: '창작자를 입력해주세요.' }, { status: 400 });
+// }
 
-  // const findSql = `SELECT item_id FROM ${config.selectedTable} WHERE id = ?`;
-  // const findResult = await executeQuery(findSql, [id]);
-  // const rows = findResult as any[];
+// const findSql = `SELECT item_id FROM ${config.selectedTable} WHERE id = ?`;
+// const findResult = await executeQuery(findSql, [id]);
+// const rows = findResult as any[];
 
-  // if (rows.length === 0) {
-  //   return NextResponse.json({ message: '데이터 없음' }, { status: 404 });
-  // }
+// if (rows.length === 0) {
+//   return NextResponse.json({ message: '데이터 없음' }, { status: 404 });
+// }
 
-  // const masterId = rows[0].item_id;
+// const masterId = rows[0].item_id;
 
-  // const keys = ['title', 'creator', 'img_dir', ...Object.keys(others)];
-  // const values = [title, creator, img_dir || '', ...Object.values(others)];
+// const keys = ['title', 'creator', 'img_dir', ...Object.keys(others)];
+// const values = [title, creator, img_dir || '', ...Object.values(others)];
 
-  // const setClause = keys.map(key => `${key} = ?`).join(', ');
+// const setClause = keys.map(key => `${key} = ?`).join(', ');
 
-  // const updateSql = `UPDATE ${config.masterTable} SET ${setClause} WHERE id = ?`;
-  // await executeQuery(updateSql, [...values, masterId]);
-  // return NextResponse.json({ message: '수정 완료' });
+// const updateSql = `UPDATE ${config.masterTable} SET ${setClause} WHERE id = ?`;
+// await executeQuery(updateSql, [...values, masterId]);
+// return NextResponse.json({ message: '수정 완료' });

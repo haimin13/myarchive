@@ -1,5 +1,5 @@
 // lib/external/igdb.ts
-import { getLocalDateString } from "../simple";
+import { getLocalDateString } from "../utility";
 
 export async function searchIGDB(query: string) {
   const clientId = process.env.TWITCH_CLIENT_ID;
@@ -20,7 +20,7 @@ export async function searchIGDB(query: string) {
 
   const res = await fetch(endpoint, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "text/plain",
       "Client-ID": `${clientId}`,
       "Authorization": `Bearer ${accessToken}`
@@ -37,7 +37,7 @@ export async function searchIGDB(query: string) {
   if (!res.ok) {
     const errorData = await res.json(); // API가 보내준 에러 메시지 읽기
     console.error("IGDB API Error Details:", errorData);
-    
+
     // 에러 메시지를 포함해서 에러 던지기
     throw new Error(
       `IGDB API Error: ${res.status} - ${errorData[0]?.cause || errorData.message || JSON.stringify(errorData)}`
@@ -56,13 +56,13 @@ export async function searchIGDB(query: string) {
     const releaseDate = item.first_release_date
       ? getLocalDateString(new Date(item.first_release_date * 1000))
       : '';
-    
-    
+
+
     return {
       id: null,
       title: item.name,
       creator: developers,
-      img_dir: item.cover?.url ? `https:${item.cover.url.replace('t_thumb','t_720p')}` : '',
+      img_dir: item.cover?.url ? `https:${item.cover.url.replace('t_thumb', 't_720p')}` : '',
       platforms: item.platforms?.map((p: any) => p.name).join(', ') || '',
       //critic_rating: item.aggregated_rating ? Number(item.aggregated_rating.toFixed(1)) : null,
       //user_rating: item.rating ? Number(item.rating.toFixed(1)) : null,

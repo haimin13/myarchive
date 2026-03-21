@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getLocalDateString } from '@/lib/simple';
+import { getLocalDateString } from '@/lib/utility';
 
 interface Props {
   items: any[];
@@ -18,7 +18,7 @@ export function ItemListView({ items, category, onItemClick }: Props) {
   return (
     <div className="space-y-2"> {/* 간격 축소: space-y-3 -> space-y-2 */}
       {items.map((item) => (
-        <div 
+        <div
           key={item.selection_id}
           onClick={() => onItemClick(item)}
           className="flex items-center bg-white p-2 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100" // 패딩 축소: p-3 -> p-2
@@ -31,7 +31,7 @@ export function ItemListView({ items, category, onItemClick }: Props) {
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]">No Img</div>
             )}
           </div>
-          
+
           {/* 텍스트 영역 */}
           <div className="ml-3 flex-1 min-w-0 flex flex-col justify-center">
             {/* 제목과 아티스트 한 줄 배치 및 truncate 적용 */}
@@ -39,7 +39,7 @@ export function ItemListView({ items, category, onItemClick }: Props) {
               <h3 className="font-bold text-sm text-gray-900 truncate">{item.title}</h3>
               <span className="text-xs text-gray-500 truncate">{item.creator}</span>
             </div>
-            
+
             {/* 날짜를 아래에 배치 */}
             <p className="text-[10px] text-gray-400 mt-0.5">
               {getLocalDateString(item.selected_date)}
@@ -56,18 +56,18 @@ export function ItemGridView({ items, category, onItemClick }: Props) {
   return (
     <div className="grid grid-cols-4 gap-4">
       {items.map((item) => (
-        <div 
-          key={item.selection_id} 
+        <div
+          key={item.selection_id}
           onClick={() => onItemClick(item)}
           className="block group"
         >
           {/* 기존 aspect-square 대신 동적 비율 클래스 적용 */}
           <div className={`${ratioClass} w-full bg-white rounded-xl shadow-sm overflow-hidden mb-2 relative border border-gray-100`}>
             {item.img_dir ? (
-              <img 
-                src={item.img_dir} 
-                alt={item.title} 
-                className="w-full h-full object-cover group-hover:scale-105 transition duration-300" 
+              <img
+                src={item.img_dir}
+                alt={item.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
