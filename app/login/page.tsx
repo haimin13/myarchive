@@ -1,14 +1,17 @@
+// app/login/page.tsx
 'use client'
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function LoginPage() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,18 +19,14 @@ export default function LoginPage() {
     const res = await fetch('api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({user_id: userId, password}),
+      body: JSON.stringify({user_id: userId, password, rememberMe}),
     });
 
     if (res.ok) {
       const data = await res.json();
-      const userStr = JSON.stringify(data.user);
-
-      if (rememberMe) {
-        localStorage.setItem('user', userStr);
-      } else {
-        sessionStorage.setItem('user', userStr);
-      }
+      
+      // 전역 상태 업데이트 (쿠키는 서버에서 이미 설정됨)
+      login(data.user);
 
       alert('환영합니다! ' + data.user.nickname + '님');
       router.push('/');
@@ -77,8 +76,14 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* 회원가입 페이지로 가는 링크 */}
-        <div className="mt-4 text-center">
+        {/* 비밀번호 찾기 및 회원가입 페이지로 가는 링크 */}
+        <div className="mt-4 text-center space-y-2">
+          <p className="text-sm text-gray-600">
+            비밀번호를 잊으셨나요?{' '}
+            <Link href="/forgot-password" title="비밀번호 찾기" className="text-blue-600 hover:underline font-bold">
+            비밀번호 찾기
+            </Link>
+          </p>
           <p className="text-sm text-gray-600">
             아직 계정이 없으신가요?{' '}
             <Link href="/register" className="text-blue-600 hover:underline font-bold">

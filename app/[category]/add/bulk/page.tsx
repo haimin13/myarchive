@@ -8,6 +8,7 @@ import { CATEGORY_CONFIG } from '@/app/constants';
 import { parseCSV } from '@/lib/simple';
 import { useBulkMatch } from '@/hooks/useBulkMatch';
 import { getLocalDateString } from '@/lib/simple';
+import { useAuth } from '@/components/AuthProvider';
 
 import BulkInputForm from '@/components/bulk/BulkInputForm';
 import ParsedTable from '@/components/bulk/ParsedTable';
@@ -22,8 +23,9 @@ export default function AddBulkPage() {
   const params = useParams();
   const category = params.category as string;
   const config = CATEGORY_CONFIG[category];
+  const { user, isLoading: isAuthLoading } = useAuth();
 
-  const [userId, setUserId] = useState<number | null>(null);
+  const userId = user?.id;
   const [textInput, setTextInput] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [parsedList, setParsedList] = useState<string[][]>([]);
@@ -180,14 +182,11 @@ export default function AddBulkPage() {
       router.push('/');
       return;
     }
-    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (!storedUser) {
+    if (!isAuthLoading && !user) {
       alert('로그인이 필요합니다!');
       router.push('/login');
-      return;
     }
-    setUserId(JSON.parse(storedUser).id);
-  }, []);
+  }, [user, isAuthLoading, config, router]);
 
   if (!config) return <div className="p-10 text-center">로딩 중...</div>
 

@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: "나만의 수집 보관함",
 };
 
+import { AuthProvider } from "@/components/AuthProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,10 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navigation />
-        <main className="mx-auto min-h-screen bg-white shadow-xl">
-          {children}
-        </main>
+        <AuthProvider>
+          <Navigation />
+          <main className="mx-auto min-h-screen bg-white shadow-xl">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

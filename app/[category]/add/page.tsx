@@ -7,10 +7,12 @@ import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
 import { getLocalDateString } from '@/lib/simple';
 import InputField from '@/components/InputField';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function AddPage() {
   const router = useRouter();
   const params = useParams();
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   const category = params.category as string;
   const config = CATEGORY_CONFIG[category];
@@ -21,7 +23,8 @@ export default function AddPage() {
     selected_date: getLocalDateString(new Date()),
     creator: ''
   }));
-  const [userId, setUserId] = useState<number | null>(null);
+  
+  const userId = user?.id;
 
   // 검색 관련 상태
   const [keyword, setKeyword] = useState('');
@@ -159,14 +162,11 @@ export default function AddPage() {
       router.push('/');
       return;
     }
-    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (!storedUser) {
+    if (!isAuthLoading && !user) {
       alert('로그인이 필요합니다!');
       router.push('/login');
-      return;
     }
-    setUserId(JSON.parse(storedUser).id);
-  }, []);
+  }, [user, isAuthLoading, config, router]);
 
   if (!config) return <div className="p-10 text-center">로딩 중...</div>
 

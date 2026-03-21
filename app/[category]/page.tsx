@@ -1,5 +1,4 @@
-// app/[category]/page.tsx
-'use client';
+"use client"
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -11,16 +10,17 @@ import ItemDetail from '@/components/item/ItemDetail';
 import ItemForm from '@/components/item/ItemForm';
 import ItemSearch from '@/components/item/ItemSearch';
 import { getLocalDateString } from '@/lib/simple';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function ListPage() {
   const params = useParams();
   const category = params.category as string;
   const config = CATEGORY_CONFIG[category];
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
-  const [userId, setUserId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isDetailModalOpen, setDetailModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -44,18 +44,16 @@ export default function ListPage() {
   // ✨ 1. 뷰 모드 상태 추가 ('list' 또는 'grid')
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
 
+  const userId = user?.id;
+
   useEffect(() => {
-    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
-    
-    if (!storedUser) {
+    if (!isAuthLoading && !user) {
       alert('로그인이 필요합니다!');
       router.push('/login');
-    } else {
-      setUserId(JSON.parse(storedUser).id);
     }
-  }, [router]);
+  }, [user, isAuthLoading, router]);
 
-  const fetchData = (currentUserId: string, searchQuery: string = '') => {
+  const fetchData = (currentUserId: string | number, searchQuery: string = '') => {
     setLoading(true);
     let url = `/api/${category}?userId=${currentUserId}`;
 

@@ -1,31 +1,17 @@
-'use client'
+"use client"
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CATEGORY_CONFIG } from './constants';
-
-interface User {
-  id: number;
-  user_id: string;
-  nickname: string;
-}
+import { useAuth } from '@/components/AuthProvider';
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout, isLoading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('user');
-    setUser(null);
+  const handleLogout = async () => {
+    await logout();
     alert('로그아웃 되었습니다.');
   };
 
@@ -42,7 +28,9 @@ export default function Home() {
       
       {/* ✨ 헤더 대신 우측 상단에 플로팅 되는 로그인/로그아웃 영역 */}
       <div className="absolute top-6 right-6 z-10 flex items-center gap-4">
-        {user ? (
+        {isLoading ? (
+          <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-lg" />
+        ) : user ? (
           <>
             <span className="font-medium text-gray-700 bg-white/80 px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-sm">
               <b className="text-blue-600">{user.nickname}</b>님

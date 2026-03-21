@@ -1,4 +1,5 @@
 // 위치: /components/item/ItemSearch.tsx
+'use client'
 import React, { useState, useEffect } from 'react';
 import { getLocalDateString } from '@/lib/simple';
 
