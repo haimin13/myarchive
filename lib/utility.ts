@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 
-export function getLocalDateString(date: any): string {
+export function getLocalDateString(date?: any): string {
   if (!date) return '';
 
   if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -20,6 +20,14 @@ export function getLocalDateString(date: any): string {
     .replace(/\. /g, '-')
     .replace(/\./g, '');
 }
+
+export const createInitialFormData = (fields: any[]) => {
+  const initialData: any = {};
+  fields.forEach(field => {
+    initialData[field.name] = field.type === 'date' ? getLocalDateString(new Date()) : '';
+  });
+  return initialData;
+};
 
 export const formatToISODate = (dateStr: string) => {
   if (!dateStr) return null;

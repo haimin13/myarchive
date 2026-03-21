@@ -1,7 +1,7 @@
 // 위치: /components/item/ItemSearch.tsx
 'use client'
 import React, { useState, useEffect } from 'react';
-import { getLocalDateString } from '@/lib/utility';
+import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 
 interface Props {
   config: any;
@@ -19,12 +19,7 @@ export default function ItemSearch({
   const [loading, setLoading] = useState(false);
   const [searchMode, setSearchMode] = useState<'internal' | 'external'>('external');
 
-  const [formData, setFormData] = useState<any>(() => ({
-    title: '',
-    img_dir: '',
-    selected_date: getLocalDateString(new Date()),
-    creator: ''
-  }));
+  const [formData, setFormData] = useState<any>(() => config ? createInitialFormData(config.fields) : {});
 
   useEffect(() => {
     if (initialKeyword) {

@@ -9,7 +9,7 @@ import BaseModal from '@/components/item/BaseModal';
 import ItemDetail from '@/components/item/ItemDetail';
 import ItemForm from '@/components/item/ItemForm';
 import ItemSearch from '@/components/item/ItemSearch';
-import { getLocalDateString } from '@/lib/utility';
+import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function ListPage() {
@@ -30,12 +30,7 @@ export default function ListPage() {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState('');
 
-  const initialFormData = {
-    title: '',
-    img_dir: '',
-    creator: '',
-    selected_date: getLocalDateString(new Date())
-  };
+  const initialFormData = config ? createInitialFormData(config.fields) : {};
   const [formData, setFormData] = useState<any>(initialFormData);
   const [addItemId, setAddItemId] = useState<number | null>(null);
 
@@ -308,7 +303,7 @@ export default function ListPage() {
           <div>
             <div className="flex justify-end mb-4">
               <button
-                onClick={() => router.push(`/${category}/add/bulk`)}
+                onClick={() => router.push(`/${category}/bulk`)}
                 className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

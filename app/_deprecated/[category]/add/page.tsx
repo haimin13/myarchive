@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/utility';
+import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import InputField from '@/components/auth/InputField';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -17,12 +17,7 @@ export default function AddPage() {
   const category = params.category as string;
   const config = CATEGORY_CONFIG[category];
 
-  const [formData, setFormData] = useState<any>(() => ({
-    title: '',
-    img_dir: '',
-    selected_date: getLocalDateString(new Date()),
-    creator: ''
-  }));
+  const [formData, setFormData] = useState<any>(() => config ? createInitialFormData(config.fields) : {});
 
   const userId = user?.id;
 
@@ -39,11 +34,7 @@ export default function AddPage() {
   const [itemId, setItemId] = useState<number | null>(null);
 
 
-  const allFields = [
-    { name: 'title', label: '제목', required: true, placeholder: `${config.koreanName} 제목을 입력하세요` },
-    ...config.fields, // DB 설정에서 가져온 필드들
-    { name: 'img_dir', label: '이미지 주소 (URL)', placeholder: 'https://...' }
-  ];
+
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,12 +106,7 @@ export default function AddPage() {
   };
 
   const handleDirectEntry = () => {
-    setFormData({
-      title: '',
-      img_dir: '',
-      creator: '',
-      selected_date: getLocalDateString(new Date())
-    });
+    setFormData(createInitialFormData(config.fields));
     setItemId(null); // ID 초기화 (신규 등록임)
     setShowForm(true);
   };
@@ -296,43 +282,16 @@ export default function AddPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                {formData.img_dir && (
-                  <div className="mt-2 text-center">
-                    <img
-                      src={formData.img_dir}
-                      alt="미리보기"
-                      className="h-32 object-contain mx-auto rounded border"
-                      onError={(e) => (e.currentTarget.style.display = 'none')}
-                    />
-                  </div>
-                )}
-              </div>
-              {allFields.map((field) => (
+              {config.fields.map((field: any) => (
                 <InputField
                   key={field.name}
                   field={field}
                   value={formData[field.name]}
                   onChange={handleChange}
-                  // itemId가 있으면(검색선택) 수정 불가. 단, isReadOnly 예외 조건이 필요하면 여기서 추가
-                  isReadOnly={!!itemId}
+                  isReadOnly={!!itemId && field.name !== 'selected_date'}
                 />
               ))}
 
-              {/* [공통 필드 3] 날짜 선택 (이건 항상 내 기록이므로 수정 가능!) */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">
-                  등록 날짜 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  name="selected_date"
-                  value={formData.selected_date}
-                  onChange={(e) => handleChange('selected_date', e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  required
-                />
-              </div>
 
               {/* 저장 버튼 */}
               <button

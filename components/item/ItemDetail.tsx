@@ -77,13 +77,14 @@ export default function ItemDetail({
           )}
         </div>
 
-        {/* 동적 필드 표시 */}
         <div className="space-y-4">
-          {config.fields.map((field: any) => (
+          {config.fields
+            .filter((f: any) => !['title', 'img_dir', 'selected_date'].includes(f.name))
+            .map((field: any) => (
             <div key={field.name} className="flex border-b border-gray-100 pb-2">
               <span className="w-32 font-bold text-gray-600 flex-shrink-0">{field.label}</span>
               <span className="text-gray-800">
-                {field.name === 'release_date' && item[field.name]
+                {field.type === 'date' && item[field.name]
                   ? getLocalDateString(item[field.name])
                   : (item[field.name] || '-')}
               </span>

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
-import { getLocalDateString } from '@/lib/utility';
+import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import ItemForm from '@/components/item/ItemForm';
 
 export default function EditPage() {
@@ -14,11 +14,7 @@ export default function EditPage() {
   const id = params.id as string;
   const config = CATEGORY_CONFIG[category];
 
-  const [formData, setFormData] = useState<any>({
-    title: '',
-    img_dir: '',
-    creator: '',
-  });
+  const [formData, setFormData] = useState<any>(() => config ? createInitialFormData(config.fields) : {});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

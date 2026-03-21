@@ -1,4 +1,4 @@
-// app/[category]/add/bulk/page.tsx
+// app/[category]/bulk/page.tsx
 
 'use client';
 
@@ -7,7 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
 import { parseCSV } from '@/lib/utility';
 import { useBulkMatch } from '@/hooks/useBulkMatch';
-import { getLocalDateString } from '@/lib/utility';
+import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import { useAuth } from '@/hooks/useAuth';
 
 import BulkInputForm from '@/components/bulk/BulkInputForm';
@@ -41,11 +41,7 @@ export default function AddBulkPage() {
     startMatching
   } = useBulkMatch(category);
 
-  const [formData, setFormData] = useState<any>(() => ({
-    title: '',
-    img_dir: '',
-    creator: ''
-  }));
+  const [formData, setFormData] = useState<any>(() => config ? createInitialFormData(config.fields) : {});
 
   const handleFormChange = (name: string, value: string) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
@@ -78,7 +74,7 @@ export default function AddBulkPage() {
 
   const closeModal = () => {
     setTargetIndex(null);
-    setFormData({ title: '', img_dir: '', creator: '' });
+    setFormData(config ? createInitialFormData(config.fields) : {});
     setIsModalOpen(false);
   }
 
@@ -116,7 +112,7 @@ export default function AddBulkPage() {
       handleSearchResultSelect(clickedItem.matchedItem);
     }
     else {
-      setFormData({ title: '', img_dir: '', creator: '' });
+      setFormData(config ? createInitialFormData(config.fields) : {});
     }
     setIsModalOpen(true);
   }
@@ -197,9 +193,9 @@ export default function AddBulkPage() {
         <div className="flex items-center justify-between mb-8 pb-4 border-b">
           <div className="flex items-center">
             <button
-              onClick={() => router.push(`/${category}/add`)}
+              onClick={() => router.push(`/${category}`)}
               className="mr-4 text-gray-500 hover:text-black transition-colors p-1"
-              aria-label="일반 등록으로 돌아가기"
+              aria-label="목록으로 돌아가기"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
