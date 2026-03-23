@@ -55,10 +55,8 @@ export function ItemGridView({ items, config, onItemClick }: Props) {
   const ratioClass = getImageRatioClass(config);
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,1fr))] 
-      md:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] 
-      lg:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] 
-      gap-x-3 gap-y-6">
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 
+      lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-x-3 gap-y-6">
       {items.map((item) => (
         <div
           key={item.selection_id}
