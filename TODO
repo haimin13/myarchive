@@ -2,6 +2,9 @@ DB 마이그레이션 (MariaDB -> Supabase(PostgreSQL))
 Vercel 배포
 훅 사용
 컴포넌트화
+로그인 인증 강화
+addpage editpage 모달로 리팩토링
+아이디 unique하게 (supabase)
 
 =====================================
 
@@ -9,11 +12,9 @@ pagination (더보기 버튼) - search와 category page
 데이터 백업, 복구
 '- single' '- EP' 지우기
 데이터 중복처리 db 확인 강화
-로그인 인증 강화
 소셜 로그인 연결
 유저 닉네임 표시
 친구 기능
-addpage editpage 모달로 리팩토링
 벌크 추가에서 리스트에서 제외 기능
 캐싱해서 로딩시간 줄이기 (데이터 사용량)
 유저 개인별 환경 세팅
@@ -24,4 +25,3 @@ selected에 favorite, 평점, hidden,  review, wish 추가
 game 상세페이지에서도 세로 비율 적용
 home 페이지에서 상단 navigation 만큼 스크롤되는 문제
 온라인 검색으로 선택해도 db 다시 체크하도록
-아이디 unique하게 (supabase)
