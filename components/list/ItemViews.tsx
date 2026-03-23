@@ -1,19 +1,20 @@
 import Link from 'next/link';
 import { getLocalDateString } from '@/lib/utility';
+import { CategoryConfig } from '@/types';
 
 interface Props {
   items: any[];
-  category: string;
+  config: CategoryConfig;
   onItemClick: (item: any) => void;
 }
 
 // 카테고리에 따른 이미지 비율 결정
-const getImageRatioClass = (category: string) => {
-  return category === 'games' ? 'aspect-[3/4]' : 'aspect-square';
+const getImageRatioClass = (config: CategoryConfig) => {
+  return config.imageAspectRatio ? `aspect-[${config.imageAspectRatio}]` : 'aspect-square';
 };
 
-export function ItemListView({ items, category, onItemClick }: Props) {
-  const ratioClass = getImageRatioClass(category);
+export function ItemListView({ items, config, onItemClick }: Props) {
+  const ratioClass = getImageRatioClass(config);
 
   return (
     <div className="space-y-2"> {/* 간격 축소: space-y-3 -> space-y-2 */}
@@ -50,11 +51,11 @@ export function ItemListView({ items, category, onItemClick }: Props) {
     </div>
   );
 }
-export function ItemGridView({ items, category, onItemClick }: Props) {
-  const ratioClass = getImageRatioClass(category);
+export function ItemGridView({ items, config, onItemClick }: Props) {
+  const ratioClass = getImageRatioClass(config);
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
       {items.map((item) => (
         <div
           key={item.selection_id}

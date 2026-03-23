@@ -15,6 +15,7 @@ export interface CategoryConfig {
   selectedTable: string;
   bgImage: string;
   fields: FieldConfig[];
+  imageAspectRatio?: string; // e.g., '1/1', '2/3', '3/4'
 }
 
 // ------ Database Interfaces ------ //

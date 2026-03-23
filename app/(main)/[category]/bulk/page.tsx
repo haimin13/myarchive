@@ -244,6 +244,7 @@ export default function AddBulkPage() {
             {/* 3. 매칭 결과 컴포넌트 */}
             <MatchedTable
               data={matchedList}
+              config={config}
               isMatching={isMatching}
               matchProgress={matchProgress}
               onItemClick={handleMatchedItemClick}

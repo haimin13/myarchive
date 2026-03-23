@@ -281,8 +281,8 @@ export default function ListPage() {
           </div>
         ) : (
           <>
-            {viewMode === 'list' && <ItemListView items={items} category={category} onItemClick={handleItemClick} />}
-            {viewMode === 'grid' && <ItemGridView items={items} category={category} onItemClick={handleItemClick} />}
+            {viewMode === 'list' && <ItemListView items={items} config={config} onItemClick={handleItemClick} />}
+            {viewMode === 'grid' && <ItemGridView items={items} config={config} onItemClick={handleItemClick} />}
           </>
         )}
       </div>

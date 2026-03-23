@@ -125,7 +125,7 @@ export default function ItemSearch({
             onClick={() => onSelect(item)}
             className="flex items-center p-3 border rounded-lg hover:bg-blue-50 cursor-pointer transition gap-3"
           >
-            <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 overflow-hidden">
+            <div className={`w-12 ${config.imageAspectRatio ? `aspect-[${config.imageAspectRatio}]` : 'aspect-square'} bg-gray-200 rounded flex-shrink-0 overflow-hidden`}>
               {item.img_dir ? (
                 <img src={item.img_dir} className="w-full h-full object-cover" alt="" />
               ) : (

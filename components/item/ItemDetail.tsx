@@ -26,19 +26,19 @@ export default function ItemDetail({
   return (
     <div>
       {/* 상단 툴바 */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end mb-2">
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={onEdit} className="text-blue-600 px-3 py-2 text-sm">
+          <Button variant="ghost" onClick={onEdit} className="text-blue-600 px-3 py-1 text-sm font-medium">
             수정
           </Button>
-          <Button variant="ghost" onClick={onDelete} isLoading={isLoading} className="text-red-500 px-3 py-2 text-sm">
+          <Button variant="ghost" onClick={onDelete} isLoading={isLoading} className="text-red-500 px-3 py-1 text-sm font-medium">
             삭제
           </Button>
         </div>
       </div>
 
       {/* 이미지 영역 */}
-      <div className="w-80 aspect-square mx-auto mt-8 bg-gray-200 rounded-xl overflow-hidden shadow-md">
+      <div className={`w-full max-w-[240px] mx-auto mt-4 bg-gray-200 rounded-xl overflow-hidden shadow-md ${config.imageAspectRatio ? `aspect-[${config.imageAspectRatio}]` : 'aspect-square'}`}>
         {item.img_dir ? (
           <img src={item.img_dir} alt={item.title} className="w-full h-full object-cover" />
         ) : (
@@ -47,11 +47,11 @@ export default function ItemDetail({
       </div>
 
       {/* 내용 영역 */}
-      <div className="p-8 pt-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">{item.title}</h1>
+      <div className="p-4 pt-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 text-center">{item.title}</h1>
 
         {/* 등록일 섹션 */}
-        <div className="text-sm text-gray-500 mb-8 border-b pb-4 flex items-center justify-center h-8">
+        <div className="text-sm text-gray-500 mb-4 border-b pb-4 flex items-center justify-center h-8">
           <span className="mr-2">등록일:</span>
 
           {isEditingDate ? (

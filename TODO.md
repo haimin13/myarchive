@@ -11,7 +11,7 @@
 - **UI Architecture:** 모달 기반의 SPA(Single Page Application) 구조
     - `[category]` 목록 페이지 내에서 모든 추가/수정/상세조회/검색 모달로 처리
     - `add`, `edit`, `[id]` 등 기존 하드코딩된 단독 페이지는 `app/_deprecated`로 아카이빙됨
-- **Config Driven:** `app/constants.ts`와 `types/index.ts`의 `CATEGORY_CONFIG`를 통해 필드 구성이 결정됨 (Data-Driven UI)
+- **Config Driven:** `app/constants.ts`와 `types/index.ts`의 `CATEGORY_CONFIG`를 통해 필드 구성 및 이미지 비율(`imageAspectRatio`)이 결정됨 (Data-Driven UI)
 
 ---
 
@@ -35,6 +35,10 @@
     - [x] 공용 `Button` 컴포넌트 개발 (`isLoading`, `variant`, `size` 지원)
     - [x] 전역 `<button>` 태그를 `Button` 컴포넌트로 전수 교체 (Auth, List, Item, Bulk 등)
     - [x] 모든 주요 작업(저장, 삭제, 검색, 로그아웃)에 로딩 상태 및 더블 클릭 방지 적용
+- [x] **Phase 1.9: 이미지 비율 및 레이아웃 최적화**
+    - [x] 카테고리별 동적 이미지 비율(1:1, 3:4, 2:3) 설정 및 적용
+    - [x] `ItemDetail` 모달 레이아웃 콤팩트화 (여백/이미지/폰트 크기 조정)
+    - [x] 리스트 그리드 뷰(Grid View) 카드 크기 최적화 (5열 배치)
 
 ---
 
@@ -55,7 +59,6 @@
 
 ### 기타
 - [ ] 데이터 백업 및 복구 기능
-- [ ] 불필요한 텍스트 데이터 정제 (`- single`, `- EP` 등 제거)
 - [ ] 불필요한 텍스트 데이터 정제 (`- single`, `- EP` 등 제거)
 
 ---

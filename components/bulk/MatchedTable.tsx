@@ -1,11 +1,14 @@
+import { CategoryConfig } from '@/types';
+
 interface Props {
   data: any[];
+  config: CategoryConfig;
   isMatching: boolean;
   matchProgress: number;
   onItemClick: (index: number) => void;
 }
 
-export default function MatchedTable({ data, isMatching, matchProgress, onItemClick }: Props) {
+export default function MatchedTable({ data, config, isMatching, matchProgress, onItemClick }: Props) {
   if (data.length === 0) return null;
 
   return (
@@ -67,7 +70,8 @@ export default function MatchedTable({ data, isMatching, matchProgress, onItemCl
                 <td className="px-4 py-3">
                   {item.matchStatus === 'loading' ? (
                     <div className="flex items-center gap-3 animate-pulse">
-                      <div className="w-10 h-10 bg-gray-200 rounded"></div>
+                      <div className={`w-10 ${config.imageAspectRatio ? `aspect-[${config.imageAspectRatio}]` : 'aspect-square'}
+                        bg-gray-200 rounded`}></div>
                       <div className="flex flex-col gap-2 w-full">
                         <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                         <div className="h-3 bg-gray-200 rounded w-1/3"></div>
@@ -76,9 +80,14 @@ export default function MatchedTable({ data, isMatching, matchProgress, onItemCl
                   ) : item.matchedItem ? (
                     <div className="flex items-center gap-3">
                       {item.matchedItem.img_dir ? (
-                        <img src={item.matchedItem.img_dir} alt="thumbnail" className="w-10 h-10 object-cover rounded shadow-sm border" />
+                        <img src={item.matchedItem.img_dir} alt="thumbnail" 
+                          className={`w-10 ${config.imageAspectRatio ? `aspect-[${config.imageAspectRatio}]` : 'aspect-square'} 
+                            object-cover rounded shadow-sm border`} />
                       ) : (
-                        <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No Img</div>
+                        <div className={`w-10 ${config.imageAspectRatio ? `aspect-[${config.imageAspectRatio}]` : 'aspect-square'}
+                          bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400`}>
+                        No Img
+                        </div>
                       )}
                       <div>
                         <div className="font-bold text-gray-900 line-clamp-1">{item.matchedItem.title}</div>
