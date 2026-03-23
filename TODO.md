@@ -31,6 +31,10 @@
 - [x] `ItemForm`, `ItemDetail`, `InputField` 동적 렌더링 리팩토링
 - [x] `createInitialFormData` 헬퍼 함수를 통한 폼 상태 초기화 최적화
 - [x] 레거시 라우팅(`add`, `edit` 등) `_deprecated` 이동 및 프로젝트 정리
+- [x] **Phase 1.8: UI/UX 고도화 (Global Button Refactoring)**
+    - [x] 공용 `Button` 컴포넌트 개발 (`isLoading`, `variant`, `size` 지원)
+    - [x] 전역 `<button>` 태그를 `Button` 컴포넌트로 전수 교체 (Auth, List, Item, Bulk 등)
+    - [x] 모든 주요 작업(저장, 삭제, 검색, 로그아웃)에 로딩 상태 및 더블 클릭 방지 적용
 
 ---
 
@@ -52,7 +56,7 @@
 ### 기타
 - [ ] 데이터 백업 및 복구 기능
 - [ ] 불필요한 텍스트 데이터 정제 (`- single`, `- EP` 등 제거)
-- [ ] 모든 버튼 클릭 시 유저 피드백(Loading 등) 추가
+- [ ] 불필요한 텍스트 데이터 정제 (`- single`, `- EP` 등 제거)
 
 ---
 

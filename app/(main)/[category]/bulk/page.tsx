@@ -10,6 +10,7 @@ import { useBulkMatch } from '@/hooks/useBulkMatch';
 import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import { useAuth } from '@/hooks/useAuth';
 
+import Button from '@/components/common/Button';
 import BulkInputForm from '@/components/bulk/BulkInputForm';
 import ParsedTable from '@/components/bulk/ParsedTable';
 import MatchedTable from '@/components/bulk/MatchedTable';
@@ -33,6 +34,7 @@ export default function AddBulkPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     matchedList,
     setMatchedList,
@@ -154,6 +156,7 @@ export default function AddBulkPage() {
       return;
     }
     console.log(itemsToSave);
+    setIsSubmitting(true);
     try {
       const res = await fetch(`/api/${category}/bulk`, {
         method: 'POST',
@@ -169,6 +172,8 @@ export default function AddBulkPage() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -192,15 +197,17 @@ export default function AddBulkPage() {
         {/*상단 헤더 영역*/}
         <div className="flex items-center justify-between mb-8 pb-4 border-b">
           <div className="flex items-center">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => router.push(`/${category}`)}
-              className="mr-4 text-gray-500 hover:text-black transition-colors p-1"
+              className="mr-4 text-gray-500 hover:text-black transition-colors"
               aria-label="목록으로 돌아가기"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-            </button>
+            </Button>
             <h1 className="text-2xl font-bold text-gray-800">
               📦 {config.koreanName} 일괄 등록
             </h1>
@@ -244,17 +251,17 @@ export default function AddBulkPage() {
           </div>
         )}
         <div className="mt-10 pt-6 border-t border-gray-100 flex justify-end">
-          <button
+          <Button
             onClick={handleBulkSave}
+            isLoading={isSubmitting}
             disabled={isMatching || !matchedList.some(item => ['db', 'api', 'manual'].includes(item.matchStatus))}
-            className="flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white font-bold rounded-lg 
-              hover:bg-blue-700 transition-all shadow-md active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-8"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             일괄 등록하기
-          </button>
+          </Button>
         </div>
       </div>
       <BaseModal

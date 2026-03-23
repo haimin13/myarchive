@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@/components/common/Button';
 
 interface Props {
   file: File | null;
@@ -29,20 +30,23 @@ export default function BulkInputForm({
             className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
         </div>
-        <button 
+        <Button 
           onClick={onParse} 
           disabled={isParseDisabled}
-          className="px-8 py-3 mt-5 sm:mt-0 rounded-lg font-bold transition shrink-0 shadow-sm text-white disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none bg-blue-600 hover:bg-blue-700"
+          variant="primary"
+          className="px-8 mt-5 sm:mt-0 shrink-0 shadow-sm"
         >
           파싱!
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onMatch}
-          disabled={isMatchDisabled} 
-          className="px-8 py-3 mt-5 sm:mt-0 rounded-lg font-bold transition shrink-0 shadow-sm text-white disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none bg-indigo-600 hover:bg-indigo-700"
+          isLoading={isMatching}
+          disabled={isMatchDisabled}
+          variant="primary" // 기호에 따라 indigo 계열로 유지하고 싶으면 className에 명시 가능
+          className="px-8 mt-5 sm:mt-0 shrink-0 shadow-sm bg-indigo-600 hover:bg-indigo-700" 
         >
           {isMatching ? `매칭 중... (${matchProgress}%)` : '매칭!'}
-        </button>
+        </Button>
       </div>
 
       <div className="w-full">
@@ -59,4 +63,4 @@ export default function BulkInputForm({
       </div>
     </div>
   );
-}
+}

@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CATEGORY_CONFIG } from '@/app/constants';
 import { useAuth } from '@/hooks/useAuth';
+import Button from '@/components/common/Button';
 
 export default function Navigation() {
   const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
 
   const isHidden = 
@@ -23,22 +25,30 @@ export default function Navigation() {
 
   const handleLogout = async () => {
     if(confirm('로그아웃 하시겠습니까?')) {
-      await logout();
-      location.href = '/login';
+      setIsLoggingOut(true);
+      try {
+        await logout();
+        location.href = '/login';
+      } catch (err) {
+        console.error(err);
+        alert('로그아웃 중 오류가 발생했습니다.');
+        setIsLoggingOut(false);
+      }
     }
   };
 
   return (
     <>
       <header className="fixed top-0 left-0 w-full bg-white h-14 shadow-sm flex items-center px-4 z-40">
-        <button
+        <Button
+          variant="ghost"
           onClick={()=>setIsOpen(true)}
-          className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition"
+          className="p-2 -ml-2 rounded-full"
         >
           <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-        </button>
+        </Button>
         <span className="ml-3 font-bold text-gray-800 text-lg">My Archive</span>
       </header>
       <div className="h-14" />
@@ -54,11 +64,11 @@ export default function Navigation() {
       >
         <div className="flex items-center justify-between p-4 border-b">
           <span className="font-bold text-xl text-gray-800">메뉴</span>
-          <button onClick={closeMenu} className="p-2 hover:bg-gray-100 rounded-full">
+          <Button variant="ghost" onClick={closeMenu} className="p-2 rounded-full">
             <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </Button>
         </div>
         <div className="p-4 space-y-2">
           <Link
@@ -76,7 +86,7 @@ export default function Navigation() {
               onClick={closeMenu}
               className={`block px-4 py-3 rounded-lg font-medium transition ${
                 pathname.startsWith(`/${key}`)
-                  ? 'bg-blue-50 text-blue-600'
+                   ? 'bg-blue-50 text-blue-600'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -85,14 +95,16 @@ export default function Navigation() {
           ))}
           <div className="my-2 border-t border-gray-100"></div>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={handleLogout}
-            className="w-full text-left px-4 py-3 rounded-lg hover:bg-red-50 text-red-500 font-medium"
+            isLoading={isLoggingOut}
+            className="w-full justify-start px-4 text-red-500 hover:bg-red-50"
           >
            🚪 로그아웃
-          </button>
+          </Button>
         </div>
       </nav>
     </>
   )
-}
+}

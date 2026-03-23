@@ -4,35 +4,45 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Button from '@/components/common/Button';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    const res = await fetch('api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, password, rememberMe }),
-    });
+    try {
+      const res = await fetch('api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, password, rememberMe }),
+      });
 
-    if (res.ok) {
-      const data = await res.json();
+      if (res.ok) {
+        const data = await res.json();
 
-      // 전역 상태 업데이트 (쿠키는 서버에서 이미 설정됨)
-      login(data.user);
+        // 전역 상태 업데이트 (쿠키는 서버에서 이미 설정됨)
+        login(data.user);
 
-      alert('환영합니다! ' + data.user.nickname + '님');
-      router.push('/');
-    } else {
-      const errorData = await res.json();
-      alert(errorData.message);
+        alert('환영합니다! ' + data.user.nickname + '님');
+        router.push('/');
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -48,6 +58,7 @@ export default function LoginPage() {
               type="text" value={userId} onChange={(e) => setUserId(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               required
+              disabled={isSubmitting}
             />
           </div>
 
@@ -57,6 +68,7 @@ export default function LoginPage() {
               type="password" value={password} onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               required
+              disabled={isSubmitting}
             />
           </div>
 
@@ -64,16 +76,18 @@ export default function LoginPage() {
             <input id="remember-me"
               type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              disabled={isSubmitting}
             />
             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">로그인 상태 유지</label>
           </div>
 
-          <button
+          <Button
             type="submit"
-            className="w-full py-3 mt-6 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+            isLoading={isSubmitting}
+            className="w-full mt-6"
           >
             로그인
-          </button>
+          </Button>
         </form>
 
         {/* 비밀번호 찾기 및 회원가입 페이지로 가는 링크 */}
@@ -94,4 +108,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
+}

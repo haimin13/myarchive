@@ -1,4 +1,4 @@
-import React from 'react';
+import Button from '@/components/common/Button';
 
 interface Props {
   isOpen: boolean;
@@ -29,12 +29,10 @@ export default function BaseModal({
           <h2 className="text-lg font-bold text-gray-800">
             {title}
           </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-700 font-bold text-xl px-2"
-          >
+          <Button variant="ghost" size="sm" onClick={onClose}
+            className="text-gray-400 hover:text-gray-700 font-bold text-xl px-2">
             ✕
-          </button>
+          </Button>
         </div>
         {/* children 들어가는 곳 */}
         <div className="overflow-y-auto p-6">

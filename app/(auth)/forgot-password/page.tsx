@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Button from '@/components/common/Button';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -66,20 +67,19 @@ export default function ForgotPasswordPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 disabled:opacity-50"
                 placeholder="example@email.com"
                 required
+                disabled={isLoading}
               />
             </div>
-            <button
+            <Button
               type="submit"
-              disabled={isLoading}
-              className={`w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-200 ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              isLoading={isLoading}
+              className="w-full"
             >
-              {isLoading ? '요청 중...' : '임시 비밀번호 발급 요청'}
-            </button>
+              임시 비밀번호 발급 요청
+            </Button>
           </form>
         )}
 
@@ -92,3 +92,4 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
+

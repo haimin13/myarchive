@@ -1,5 +1,4 @@
-import Link from 'next/link';
-import React from 'react';
+import Button from '@/components/common/Button';
 
 interface Props {
   category: string;
@@ -21,12 +20,12 @@ export default function ListHeader({
         <h1 className="text-2xl font-bold text-gray-800">
           {koreanName} 보관함 🗂️
         </h1>
-        <button 
+        <Button 
           onClick={onAddClick}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 text-sm"
+          size="sm"
         >
           + 추가
-        </button>
+        </Button>
       </div>
 
       <div className="flex gap-2">
@@ -38,29 +37,34 @@ export default function ListHeader({
             onChange={(e) => setKeyword(e.target.value)}
             className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
           />
-          <button
+          <Button
             type="submit"
-            className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold hover:bg-black transition"
+            className="bg-gray-800 text-white rounded-lg hover:bg-black transition"
+            size="sm"
           >
             🔍
-          </button>
+          </Button>
         </form>
 
-        <div className="flex bg-gray-200 rounded-lg p-1">
-          <button
+        <div className="flex bg-gray-200 rounded-lg p-1 gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md transition ${viewMode === 'list' ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}
+            className={`px-2 py-2 rounded-md transition border-none shadow-none ${viewMode === 'list' ? 'bg-white text-blue-600' : 'text-gray-500 hover:bg-gray-300'}`}
             title="리스트 보기"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md transition ${viewMode === 'grid' ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}
+            className={`px-2 py-2 rounded-md transition border-none shadow-none ${viewMode === 'grid' ? 'bg-white text-blue-600' : 'text-gray-500 hover:bg-gray-300'}`}
             title="그리드 보기"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { CATEGORY_CONFIG } from '@/app/constants';
 import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import InputField from '@/components/auth/InputField';
 import { useAuth } from '@/hooks/useAuth';
+import Button from '@/components/common/Button';
 
 export default function AddPage() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function AddPage() {
   const config = CATEGORY_CONFIG[category];
 
   const [formData, setFormData] = useState<any>(() => config ? createInitialFormData(config.fields) : {});
+  const creatorLabel = config?.fields?.find((f: any) => f.name === 'creator')?.label || '항목';
 
   const userId = user?.id;
 
@@ -165,7 +167,9 @@ export default function AddPage() {
           <div>
             <div className="flex items-center justify-between mb-6 border-b pb-4">
               <div className="flex items-center">
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => router.push(`/${category}`)}
                   className="mr-3 text-gray-500 hover:text-black"
                   aria-label="뒤로 가기"
@@ -173,59 +177,63 @@ export default function AddPage() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
-                </button>
+                </Button>
                 <h1 className="text-2xl font-bold text-gray-800">
                   🔎 {config.koreanName} 검색
                 </h1>
               </div>
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => router.push(`/${category}/add/bulk`)}
-                className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
+                className="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border-none shadow-none"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
                 일괄 등록
-              </button>
+              </Button>
             </div>
 
-            {/* 검색 모드 탭 (Internal vs External) */}
             <div className="flex border-b mb-6">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handleTabChange('internal')}
-                className={`flex-1 pb-3 font-bold transition ${searchMode === 'internal'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-400 hover:text-gray-600'
+                className={`flex-1 pb-3 font-bold transition rounded-none border-b-2 shadow-none ${searchMode === 'internal'
+                  ? 'text-blue-600 border-blue-600'
+                  : 'text-gray-400 border-transparent hover:text-gray-600'
                   }`}
               >
                 DB 검색
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => handleTabChange('external')}
-                className={`flex-1 pb-3 font-bold transition ${searchMode === 'external'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-400 hover:text-gray-600'
+                className={`flex-1 pb-3 font-bold transition rounded-none border-b-2 shadow-none ${searchMode === 'external'
+                  ? 'text-blue-600 border-blue-600'
+                  : 'text-gray-400 border-transparent hover:text-gray-600'
                   }`}
               >
                 온라인 검색
-              </button>
+              </Button>
             </div>
 
             <form onSubmit={handleSearch} className="flex gap-2 mb-6">
               <input
                 type="text"
-                placeholder={`제목 또는 ${config.fields[0].label} 검색`}
+                placeholder={`제목 또는 ${creatorLabel} 검색`}
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
                 autoFocus
               />
-              <button
+              <Button
                 type="submit"
-                className="bg-blue-600 text-white px-4 rounded-lg font-bold hover:bg-blue-700"
+                isLoading={loading}
+                className="px-4"
               >
                 검색
-              </button>
+              </Button>
             </form>
 
             <div className="space-y-2 mb-6 max-h-80 overflow-y-auto">
@@ -258,12 +266,13 @@ export default function AddPage() {
 
             <div className="border-t pt-4 text-center">
               <p className="text-sm text-gray-500 mb-2">원하는 결과가 없나요?</p>
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleDirectEntry}
-                className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
+                className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition"
               >
                 + 직접 입력해서 추가하기
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
@@ -271,11 +280,17 @@ export default function AddPage() {
           /* 입력 폼 (SCENE 2) */
           <div>
             <div className="flex items-center mb-6 border-b pb-4">
-              <button onClick={() => setShowForm(false)} className="mr-3 text-gray-500 hover:text-black">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowForm(false)}
+                className="mr-3 text-gray-500 hover:text-black"
+                aria-label="뒤로 가기"
+              >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-              </button>
+              </Button>
               <h1 className="text-2xl font-bold text-gray-800">
                 {config.koreanName} 정보 입력 📝
               </h1>
@@ -294,16 +309,13 @@ export default function AddPage() {
 
 
               {/* 저장 버튼 */}
-              <button
+              <Button
                 type="submit"
-                disabled={isSubmitting}
-                className={`w-full py-3 mt-4 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-lg ${isSubmitting
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
+                isLoading={isSubmitting}
+                className="w-full mt-4"
               >
-                {isSubmitting ? '저장 중...' : '저장하기'}
-              </button>
+                저장하기
+              </Button>
             </form>
           </div>
         )}

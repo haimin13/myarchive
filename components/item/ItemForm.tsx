@@ -1,5 +1,6 @@
 import React from 'react';
 import InputField from '@/components/auth/InputField';
+import Button from '@/components/common/Button';
 import { getLocalDateString } from '@/lib/utility';
 
 interface Props {
@@ -10,10 +11,11 @@ interface Props {
   onCancel: () => void;
   submitText?: string;
   isAdding?: boolean;
+  isLoading?: boolean;
 }
 
 export default function ItemForm({
-  config, formData, onChange, onSubmit, onCancel, submitText = "저장", isAdding = false
+  config, formData, onChange, onSubmit, onCancel, submitText = "저장", isAdding = false, isLoading = false
 }: Props) {
   const fieldsToRender = config?.fields 
     ? (isAdding ? config.fields : config.fields.filter((f: any) => f.name !== 'selected_date'))
@@ -37,21 +39,25 @@ export default function ItemForm({
         ))}
 
         <div className="flex gap-2 mt-6">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={onCancel}
-            className="flex-1 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300"
+            className="flex-1"
+            disabled={isLoading}
           >
             취소
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"
+            variant="primary"
+            isLoading={isLoading}
+            className="flex-1"
           >
             {submitText}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
   );
-}
+}

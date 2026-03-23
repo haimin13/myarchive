@@ -1,7 +1,7 @@
 import { CategoryConfig, FieldConfig } from '@/types';
 
 export const COMMON_FIELDS: FieldConfig[] = [
-  { name: 'img_dir', label: '포스터 / 표지', type: 'image' },
+  { name: 'img_dir', label: '대표 이미지', type: 'image' },
   { name: 'title', label: '제목', type: 'text', placeholder: '제목을 입력하세요', required: true },
   { name: 'selected_date', label: '수집한 날짜', type: 'date', required: true },
 ];

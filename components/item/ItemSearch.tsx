@@ -1,6 +1,7 @@
 // 위치: /components/item/ItemSearch.tsx
 'use client'
 import React, { useState, useEffect } from 'react';
+import Button from '@/components/common/Button';
 import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 
 interface Props {
@@ -13,6 +14,7 @@ export default function ItemSearch({
   config, initialKeyword, onSelect
 }: Props) {
   const category = config.name;
+  const creatorLabel = config.fields.find((f: any) => f.name === 'creator')?.label || '항목';
 
   const [keyword, setKeyword] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -25,7 +27,7 @@ export default function ItemSearch({
     if (initialKeyword) {
       executeSearch(initialKeyword, searchMode);
     }
-  });
+  }, []); // 빈 의존성 배열 추가하여 무한 루프 방지
 
   const executeSearch = async (searchQuery: string, mode: string) => {
     if (!keyword.trim()) {
@@ -73,46 +75,49 @@ export default function ItemSearch({
     <div>
       {/* 검색 모드 탭 (Internal vs External) */}
       <div className="flex border-b mb-6">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => handleTabChange('internal')}
-          className={`flex-1 pb-3 font-bold transition ${searchMode === 'internal'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-400 hover:text-gray-600'
+          className={`flex-1 pb-3 font-bold transition rounded-none border-b-2 shadow-none ${searchMode === 'internal'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-gray-400 border-transparent hover:text-gray-600'
             }`}
         >
           DB 검색
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleTabChange('external')}
-          className={`flex-1 pb-3 font-bold transition ${searchMode === 'external'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-400 hover:text-gray-600'
+          className={`flex-1 pb-3 font-bold transition rounded-none border-b-2 shadow-none ${searchMode === 'external'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-gray-400 border-transparent hover:text-gray-600'
             }`}
         >
           온라인 검색
-        </button>
+        </Button>
       </div>
       {/* 검색창 */}
       <form onSubmit={handleSearch} className="flex gap-2 mb-6">
         <input
           type="text"
-          placeholder={`제목 또는 ${config.fields[0].label} 검색`}
+          placeholder={`제목 또는 ${creatorLabel} 검색`}
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
           autoFocus
         />
-        <button
+        <Button
           type="submit"
-          className="bg-blue-600 text-white px-4 rounded-lg font-bold hover:bg-blue-700"
+          isLoading={loading}
+          className="px-6"
         >
           검색
-        </button>
+        </Button>
       </form>
 
       {/* 검색 결과 리스트 */}
       <div className="space-y-2 mb-6 max-h-80 overflow-y-auto">
-        {loading && <div className="text-center text-gray-500">검색 중...</div>}
+        {loading && <div className="text-center text-gray-500 py-4">검색 중...</div>}
 
         {!loading && searchResults.length > 0 && searchResults.map((item: any, index: number) => (
           <div

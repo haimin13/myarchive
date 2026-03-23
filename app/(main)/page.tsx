@@ -1,17 +1,31 @@
 "use client"
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CATEGORY_CONFIG } from '../constants';
 import { useAuth } from '@/hooks/useAuth';
+import Button from '@/components/common/Button';
 
 export default function Home() {
   const { user, logout, isLoading } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
+
   const handleLogout = async () => {
-    await logout();
-    alert('로그아웃 되었습니다.');
+    if(confirm('로그아웃 하시겠습니까?')) {
+      setIsLoggingOut(true);
+      try {
+        await logout();
+        alert('로그아웃 되었습니다.');
+      } catch (err) {
+        console.error(err);
+        alert('로그아웃 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoggingOut(false);
+      }
+    }
   };
 
   const handleCategoryClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -31,16 +45,19 @@ export default function Home() {
           <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-lg" />
         ) : user ? (
           <>
-            <span className="font-medium text-gray-700 bg-white/80 px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-sm">
+            <span className="font-medium text-gray-700 bg-white/80 px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-sm border border-gray-100">
               <b className="text-blue-600">{user.nickname}</b>님
             </span>
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={handleLogout}
-              className="text-sm px-4 py-2 bg-white text-gray-600 rounded-lg font-bold hover:bg-gray-100 transition shadow-sm border border-gray-200"
+              isLoading={isLoggingOut}
             >
               로그아웃
-            </button>
+            </Button>
           </>
+
         ) : (
           <>
             <Link

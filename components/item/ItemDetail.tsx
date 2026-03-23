@@ -1,5 +1,5 @@
 // 위치: /components/item/ItemDetail.tsx
-import React from 'react';
+import Button from '@/components/common/Button';
 import { getLocalDateString } from '@/lib/utility';
 
 interface Props {
@@ -15,23 +15,25 @@ interface Props {
   onDateEditStart: () => void;
   onDateEditCancel: () => void;
   onDateSubmit: () => void;
+  isLoading?: boolean;
 }
 
 export default function ItemDetail({
   item, config, onEdit, onDelete,
-  isEditingDate, tempDate, onTempDateChange, onDateEditStart, onDateEditCancel, onDateSubmit
+  isEditingDate, tempDate, onTempDateChange, onDateEditStart, onDateEditCancel, onDateSubmit,
+  isLoading = false
 }: Props) {
   return (
     <div>
       {/* 상단 툴바 */}
       <div className="flex items-center justify-end">
         <div className="flex gap-2">
-          <button onClick={onEdit} className="text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition text-sm font-bold">
+          <Button variant="ghost" onClick={onEdit} className="text-blue-600 px-3 py-2 text-sm">
             수정
-          </button>
-          <button onClick={onDelete} className="text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition text-sm font-bold">
+          </Button>
+          <Button variant="ghost" onClick={onDelete} isLoading={isLoading} className="text-red-500 px-3 py-2 text-sm">
             삭제
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -59,20 +61,31 @@ export default function ItemDetail({
                 value={tempDate}
                 onChange={(e) => onTempDateChange(e.target.value)}
                 className="border border-gray-300 p-1 rounded text-sm bg-white"
+                disabled={isLoading}
               />
-              <button onClick={onDateSubmit} className="text-blue-600 font-bold hover:underline">저장</button>
-              <button onClick={onDateEditCancel} className="text-gray-400 hover:text-gray-600 hover:underline">취소</button>
+              <Button 
+                variant="ghost" onClick={onDateSubmit} isLoading={isLoading}
+                className="text-blue-600 px-2 py-1 text-xs"
+              >
+                저장
+              </Button>
+              <Button 
+                variant="ghost" onClick={onDateEditCancel} disabled={isLoading}
+                className="text-gray-400 px-2 py-1 text-xs"
+              >
+                취소
+              </Button>
             </div>
           ) : (
             <>
               <span>{getLocalDateString(item.selected_date)}</span>
-              <button
-                onClick={onDateEditStart}
-                className="ml-2 text-gray-400 hover:text-blue-500 transition"
-                title="날짜 수정"
+              <Button
+                variant="ghost" size="sm" onClick={onDateEditStart} 
+                className="ml-2 px-1 py-1 text-gray-400 hover:text-blue-500 border-none shadow-none"
+                title="날짜 수정" disabled={isLoading}
               >
                 ✎
-              </button>
+              </Button>
             </>
           )}
         </div>

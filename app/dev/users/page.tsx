@@ -1,6 +1,7 @@
 'use client'
 
 import {useState, useEffect} from 'react';
+import Button from '@/components/common/Button';
 
 interface User {
   id: number;
@@ -50,15 +51,13 @@ export default function Home() {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">📂 유저 목록 (DB 연동)</h1>
-        <button
+        <Button
+          variant="danger"
           onClick={handleMigrate}
-          disabled={isMigrating}
-          className={`px-4 py-2 rounded-lg font-bold text-white transition shadow-md ${
-            isMigrating ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
-          }`}
+          isLoading={isMigrating}
         >
-          {isMigrating ? '변환 중...' : '비밀번호 일괄 해쉬화'}
-        </button>
+          비밀번호 일괄 해쉬화
+        </Button>
       </div>
 
       {/* 로딩 중일 때 보여줄 화면 */}
@@ -80,4 +79,4 @@ export default function Home() {
       )}
     </div>
   );
-}
+}

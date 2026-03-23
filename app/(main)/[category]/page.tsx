@@ -11,6 +11,7 @@ import ItemForm from '@/components/item/ItemForm';
 import ItemSearch from '@/components/item/ItemSearch';
 import { getLocalDateString, createInitialFormData } from '@/lib/utility';
 import { useAuth } from '@/hooks/useAuth';
+import Button from '@/components/common/Button';
 
 export default function ListPage() {
   const params = useParams();
@@ -36,8 +37,8 @@ export default function ListPage() {
 
   const router = useRouter();
 
-  // ✨ 1. 뷰 모드 상태 추가 ('list' 또는 'grid')
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userId = user?.id;
 
@@ -69,33 +70,49 @@ export default function ListPage() {
 
   const handleDelete = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    const res = await fetch(`/api/${category}/${selectedItem.id}`, {
-      method: 'DELETE'
-    });
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/${category}/${selectedItem.id}`, {
+        method: 'DELETE'
+      });
 
-    if (res.ok) {
-      setDetailModalOpen(false);
-      fetchData(userId!);
-    } else {
-      alert('삭제 실패');
+      if (res.ok) {
+        setDetailModalOpen(false);
+        fetchData(userId!);
+      } else {
+        alert('삭제 실패');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDateUpdate = async () => {
     if (!tempDate || !selectedItem) return;
-    const res = await fetch(`/api/${category}/${selectedItem.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ selected_date: tempDate }),
-    });
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/${category}/${selectedItem.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selected_date: tempDate }),
+      });
 
-    if (res.ok) {
-      setSelectedItem((prev: any) => ({ ...prev, selected_date: tempDate }));
-      setIsEditingDate(false);
-      fetchData(userId!);
-      alert('날짜가 변경되었습니다.');
-    } else {
-      alert('날짜 수정 실패');
+      if (res.ok) {
+        setSelectedItem((prev: any) => ({ ...prev, selected_date: tempDate }));
+        setIsEditingDate(false);
+        fetchData(userId!);
+        alert('날짜가 변경되었습니다.');
+      } else {
+        alert('날짜 수정 실패');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -114,17 +131,25 @@ export default function ListPage() {
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedItem) return;
-    const res = await fetch(`/api/${category}/${selectedItem.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    if (res.ok) {
-      setEditModalOpen(false);
-      fetchData(userId!);
-      alert('수정되었습니다.');
-    } else {
-      alert('수정 실패');
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/${category}/${selectedItem.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setEditModalOpen(false);
+        fetchData(userId!);
+        alert('수정되었습니다.');
+      } else {
+        alert('수정 실패');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -132,6 +157,7 @@ export default function ListPage() {
     e.preventDefault();
     if (!userId) return;
 
+    setIsSubmitting(true);
     try {
       const res = await fetch(`/api/${category}`, {
         method: 'POST',
@@ -152,6 +178,9 @@ export default function ListPage() {
       }
     } catch (err) {
       console.error(err);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -277,6 +306,7 @@ export default function ListPage() {
             }}
             onDateEditCancel={() => setIsEditingDate(false)}
             onDateSubmit={handleDateUpdate}
+            isLoading={isSubmitting}
           />
         }
       </BaseModal>
@@ -292,6 +322,7 @@ export default function ListPage() {
           onSubmit={handleEditSubmit}
           onCancel={closeEditModal}
           submitText="수정 완료"
+          isLoading={isSubmitting}
         />}
       </BaseModal>
       <BaseModal
@@ -302,15 +333,17 @@ export default function ListPage() {
         {addStep === 'search' ? (
           <div>
             <div className="flex justify-end mb-4">
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => router.push(`/${category}/bulk`)}
-                className="flex items-center gap-1.5 text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg font-bold transition-colors"
+                className="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border-none shadow-none"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
                 일괄 등록
-              </button>
+              </Button>
             </div>
             <ItemSearch
               config={config}
@@ -318,12 +351,13 @@ export default function ListPage() {
             />
             <div className="border-t pt-4 text-center mt-4">
               <p className="text-sm text-gray-500 mb-2">원하는 결과가 없나요?</p>
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleDirectEntry}
-                className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 transition"
+                className="w-full py-4 border-2 border-dashed border-gray-300 text-gray-600 font-bold rounded-lg hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition"
               >
                 + 직접 입력해서 추가하기
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
@@ -336,6 +370,7 @@ export default function ListPage() {
               onCancel={() => setAddStep('search')}
               submitText="추가 완료"
               isAdding={true}
+              isLoading={isSubmitting}
             />
           </div>
         )}

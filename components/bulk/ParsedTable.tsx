@@ -1,4 +1,4 @@
-import React from 'react';
+import Button from '@/components/common/Button';
 
 interface Props {
   data: string[][];
@@ -12,15 +12,16 @@ export default function ParsedTable({ data, config, isOpen, onToggle }: Props) {
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      <button 
+      <Button 
+        variant="ghost"
         onClick={onToggle}
-        className="w-full bg-gray-100 px-4 py-3 flex justify-between items-center hover:bg-gray-200 transition"
+        className="w-full bg-gray-100 flex justify-between items-center hover:bg-gray-200 border-none rounded-none py-3"
       >
-        <h2 className="text-lg font-bold text-gray-800">
+        <span className="text-lg font-bold text-gray-800">
           파싱 결과 확인 ({data.length}건)
-        </h2>
+        </span>
         <span className="text-gray-500">{isOpen ? '▲ 접기' : '▼ 펼치기'}</span>
-      </button>
+      </Button>
       
       {isOpen && (
         <div className="overflow-x-auto p-4 bg-white">
