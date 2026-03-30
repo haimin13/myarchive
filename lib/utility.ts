@@ -1,14 +1,10 @@
 import Papa from 'papaparse';
 
 export function getLocalDateString(date?: any): string {
-  if (!date) return '';
-
-  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return date;
-  }
-  const d = typeof date === 'string' ? new Date(date) : date;
+  // 인자가 없거나 유효하지 않으면 오늘 날짜 사용
+  const d = !date ? new Date() : (typeof date === 'string' ? new Date(date) : date);
   
-  if (isNaN(d.getTime())) return '';
+  if (!d || isNaN(d.getTime())) return '';
 
   return new Intl.DateTimeFormat('ko-KR', {
     timeZone: 'Asia/Seoul',

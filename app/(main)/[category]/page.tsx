@@ -31,7 +31,7 @@ export default function ListPage() {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState('');
 
-  const initialFormData = config ? createInitialFormData(config.fields) : {};
+  const initialFormData = config ? createInitialFormData([...config.fields, ...config.selectionFields]) : {};
   const [formData, setFormData] = useState<any>(initialFormData);
   const [addItemId, setAddItemId] = useState<number | null>(null);
 
