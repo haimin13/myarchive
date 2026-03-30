@@ -1,25 +1,22 @@
 import React from 'react';
 import InputField from '@/components/auth/InputField';
 import Button from '@/components/common/Button';
-import { getLocalDateString } from '@/lib/utility';
 
 interface Props {
   config: any;
+  fields: any[]; // 명시적으로 렌더링할 필드 목록을 받습니다.
   formData: any;
   onChange: (name: string, value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   submitText?: string;
-  isAdding?: boolean;
   isLoading?: boolean;
 }
 
 export default function ItemForm({
-  config, formData, onChange, onSubmit, onCancel, submitText = "저장", isAdding = false, isLoading = false
+  config, fields, formData, onChange, onSubmit, onCancel, submitText = "저장", isLoading = false
 }: Props) {
-  const fieldsToRender = config?.fields 
-    ? (isAdding ? config.fields : config.fields.filter((f: any) => f.name !== 'selected_date'))
-    : [];
+  const fieldsToRender = fields || [];
 
   return (
     <div>
@@ -60,4 +57,4 @@ export default function ItemForm({
       </form>
     </div>
   );
-}
+}

@@ -51,7 +51,7 @@ export default function ListPage() {
 
   const fetchData = (currentUserId: string | number, searchQuery: string = '') => {
     setLoading(true);
-    let url = `/api/${category}?userId=${currentUserId}`;
+    let url = `/api/selections?category=${category}&userId=${currentUserId}`;
 
     if (searchQuery) {
       url += `&q=${searchQuery}`;
@@ -72,7 +72,7 @@ export default function ListPage() {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/${category}/${selectedItem.id}`, {
+      const res = await fetch(`/api/selections?category=${category}&id=${selectedItem.selection_id}`, {
         method: 'DELETE'
       });
 
@@ -90,23 +90,32 @@ export default function ListPage() {
     }
   };
 
-  const handleDateUpdate = async () => {
-    if (!tempDate || !selectedItem) return;
+  const handleDateUpdate = async (e?: React.FormEvent) => {
+    if (e && e.preventDefault) e.preventDefault();
+    
+    // 인라인 수정 중이면 tempDate를, 모달 수정 중이면 formData.selected_date를 사용합니다.
+    const dateToUse = isEditingDate ? tempDate : formData.selected_date;
+
+    if (!dateToUse || !selectedItem) return;
+
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/${category}/${selectedItem.id}`, {
+      const res = await fetch(`/api/selections`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selected_date: tempDate }),
+        body: JSON.stringify({
+          category: category,
+          selection_id: selectedItem.selection_id,
+          selected_date: dateToUse
+        }),
       });
 
       if (res.ok) {
-        setSelectedItem((prev: any) => ({ ...prev, selected_date: tempDate }));
+        setSelectedItem((prev: any) => ({ ...prev, selected_date: dateToUse }));
         setIsEditingDate(false);
         fetchData(userId!);
-        alert('날짜가 변경되었습니다.');
       } else {
-        alert('날짜 수정 실패');
+        alert('저장 실패');
       }
     } catch (err) {
       console.error(err);
@@ -132,11 +141,20 @@ export default function ListPage() {
     e.preventDefault();
     if (!selectedItem) return;
     setIsSubmitting(true);
+
+    // 마스터 정보 수정 시에는 개인 속성 제외
+    const { selected_date, user_id, selection_id, id: ignoreId, ...onlyMasterData } = formData;
+
     try {
-      const res = await fetch(`/api/${category}/${selectedItem.id}`, {
+      const res = await fetch(`/api/items`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          category: category,
+          item_id: selectedItem.id, // Master ID
+          selection_id: selectedItem.selection_id,
+          ...onlyMasterData
+        }),
       });
       if (res.ok) {
         setEditModalOpen(false);
@@ -159,13 +177,37 @@ export default function ListPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/${category}`, {
+      let finalItemId = addItemId;
+
+      if (!finalItemId) {
+        // Create master item
+        const masterRes = await fetch(`/api/items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            category: category,
+            ...formData,
+          }),
+        });
+
+        if (!masterRes.ok) {
+          alert('마스터 정보 생성 실패');
+          setIsSubmitting(false);
+          return;
+        }
+        const masterData = await masterRes.json();
+        finalItemId = masterData.id;
+      }
+
+      // Create selection link
+      const res = await fetch(`/api/selections`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...formData,
+          category: category,
           user_id: userId,
-          item_id: addItemId
+          item_id: finalItemId,
+          selected_date: formData.selected_date
         }),
       });
 
@@ -315,15 +357,18 @@ export default function ListPage() {
         onClose={closeEditModal}
         title="수정하기"
       >
-        {selectedItem && <ItemForm
-          formData={formData}
-          config={config}
-          onChange={handleFormChange}
-          onSubmit={handleEditSubmit}
-          onCancel={closeEditModal}
-          submitText="수정 완료"
-          isLoading={isSubmitting}
-        />}
+        {selectedItem && (
+          <ItemForm
+            fields={config.fields}
+            formData={formData}
+            config={config}
+            onChange={handleFormChange}
+            onSubmit={handleEditSubmit}
+            onCancel={closeEditModal}
+            submitText="정보 수정"
+            isLoading={isSubmitting}
+          />
+        )}
       </BaseModal>
       <BaseModal
         isOpen={isAddModalOpen}
@@ -363,13 +408,13 @@ export default function ListPage() {
         ) : (
           <div className="p-4">
             <ItemForm
+              fields={[...config.fields, ...config.selectionFields]}
               formData={formData}
               config={config}
               onChange={handleFormChange}
               onSubmit={handleAddSubmit}
               onCancel={() => setAddStep('search')}
               submitText="추가 완료"
-              isAdding={true}
               isLoading={isSubmitting}
             />
           </div>

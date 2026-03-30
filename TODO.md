@@ -12,6 +12,7 @@
     - `[category]` 목록 페이지 내에서 모든 추가/수정/상세조회/검색 모달로 처리
     - `add`, `edit`, `[id]` 등 기존 하드코딩된 단독 페이지는 `app/_deprecated`로 아카이빙됨
 - **Config Driven:** `app/constants.ts`와 `types/index.ts`의 `CATEGORY_CONFIG`를 통해 필드 구성 및 이미지 비율(`imageAspectRatio`)이 결정됨 (Data-Driven UI)
+- **Flat API Architecture:** `/api/selections`와 `/api/items`로 관심사 분리. 마스터 데이터 중복 시 자동 병합(Re-link) 로직 포함.
 
 ---
 
@@ -38,7 +39,13 @@
 - [x] **Phase 1.9: 이미지 비율 및 레이아웃 최적화**
     - [x] 카테고리별 동적 이미지 비율(1:1, 3:4, 2:3) 설정 및 적용
     - [x] `ItemDetail` 모달 레이아웃 콤팩트화 (여백/이미지/폰트 크기 조정)
-    - [x] 리스트 그리드 뷰(Grid View) 카드 크기 최적화 (5열 배치)
+    - [x] 리스트 그리드 뷰(Grid View) 최적화 (3~10열 가변형 반응형 그리드 적용, 점핑 현상 해결)
+- [x] **Phase 1.95: API Restructuring & Data Separation**
+    - [x] `/api/selections` & `/api/items` 신설 (Flat API 구조)
+    - [x] 중복 데이터 자동 병합(Auto-relinking master items) 로직 구현
+    - [x] 마스터 필드와 유저 셀렉션 필드의 구조적 분리 (`constants.ts`)
+    - [x] 범용 `ItemForm` 리팩토링 및 수정 모달 간소화 (Master 전용)
+    - [x] 인라인 등록일 수정 및 검색 고도화 로직 보완
 
 ---
 
@@ -52,10 +59,10 @@
 ### UI/UX 개선 및 기능 추가
 - [ ] **Pagination:** 상세 조회 및 검색 결과 많을 때 '더보기' 버튼
 - [ ] **Home 스크롤 이슈:** 상단 Navigation만큼 스크롤되는 문제 해결
-- [ ] **데이터 중복 처리:** DB 저장 전 중복 여부 체크 로직 강화
+- [x] **데이터 중복 처리:** API 레벨에서 마스터 데이터 중복 자동 병합 로직 구현 [DONE]
 - [ ] **소셜 로그인:** Google/GitHub 등 OAuth 연결
-- [ ] **필드 확장:** 게임 카테고리에 `playtime`, `playing` 추가 및 아이템별 `favorite`, `rating` 등 추가
-- [ ] **검색 고도화:** 온라인 검색 결과를 선택해도 다시 한 번 DB 체크하는 로직
+- [ ] **필드 확장:** `favorite`, `rating`, `comment` 등 유저별 컬렉션 속성 본격 추가
+- [x] **검색 고도화:** 온라인 검색 결과를 선택해도 다시 한 번 DB 체크하는 로직 [DONE]
 
 ### 기타
 - [ ] 데이터 백업 및 복구 기능
@@ -64,6 +71,6 @@
 ---
 
 ## 📌 작업 팁 (For AI Assistant)
-1. 새로운 필드를 추가할 때는 `app/constants.ts`의 `CATEGORY_CONFIG`만 수정하면 UI가 자동 반영됩니다.
+1. 새로운 필드를 추가할 때는 `app/constants.ts`의 `CATEGORY_CONFIG` 내 `fields` 또는 `selectionFields`만 수정하면 UI가 자동 반영됩니다.
 2. 데이터 조작 로직은 `hooks`나 `lib` 폴더를 최대한 활용하세요.
 3. 배포는 Vercel을 사용 중이며, DB 수정 시 Supabase 대시보드 확인이 필요할 수 있습니다.

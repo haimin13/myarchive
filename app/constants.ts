@@ -3,6 +3,9 @@ import { CategoryConfig, FieldConfig } from '@/types';
 export const COMMON_FIELDS: FieldConfig[] = [
   { name: 'img_dir', label: '대표 이미지', type: 'image' },
   { name: 'title', label: '제목', type: 'text', placeholder: '제목을 입력하세요', required: true },
+];
+
+export const SELECTION_FIELDS: FieldConfig[] = [
   { name: 'selected_date', label: '수집한 날짜', type: 'date', required: true },
 ];
 
@@ -18,6 +21,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
       { name: 'creator', label: '아티스트', type: 'text', placeholder: '예: 아이유', required: true },
       { name: 'release_date', label: '발매일', type: 'date', placeholder: 'YYYY-MM-DD' },
     ],
+    selectionFields: SELECTION_FIELDS,
     imageAspectRatio: '1/1',
   },
   games: {
@@ -33,6 +37,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
       { name: 'release_date', label: '출시일', type: 'date', placeholder: 'YYYY-MM-DD' },
       { name: 'genres', label: '장르', type: 'text'},
     ],
+    selectionFields: SELECTION_FIELDS,
     imageAspectRatio: '3/4',
   },
   movies: {
@@ -46,6 +51,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
       { name: 'creator', label: '감독', type: 'text', placeholder: '예: 봉준호', required: true },
       { name: 'release_date', label: '개봉일', type: 'date', placeholder: 'YYYY-MM-DD' },
     ],
+    selectionFields: SELECTION_FIELDS,
     imageAspectRatio: '2/3',
   },
   books: {
@@ -59,6 +65,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
       { name: 'creator', label: '작가', type: 'text', placeholder: '예: 한강', required: true },
       { name: 'release_date', label: '출판년도', type: 'text', placeholder: 'YYYY' },
     ],
+    selectionFields: SELECTION_FIELDS,
     imageAspectRatio: '2/3',
   },
   anime: {
@@ -72,6 +79,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
       { name: 'creator', label: '작가', type: 'text', placeholder: '예: 오다 에이이치로', required: true },
       { name: 'release_date', label: '연재년도', type: 'text', placeholder: 'YYYY' },
     ],
+    selectionFields: SELECTION_FIELDS,
     imageAspectRatio: '2/3',
   },
   tvshows: {
@@ -85,6 +93,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
       { name: 'creator', label: '제작자', type: 'text', placeholder: '', required: true },
       { name: 'release_date', label: '방영년도', type: 'text', placeholder: 'YYYY' },
     ],
+    selectionFields: SELECTION_FIELDS,
     imageAspectRatio: '2/3',
   },
 };

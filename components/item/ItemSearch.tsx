@@ -38,8 +38,8 @@ export default function ItemSearch({
 
     try {
       const endpoint = searchMode === 'internal'
-        ? `/api/${category}/search?q=${keyword}`
-        : `/api/external/${category}?q=${keyword}`;
+        ? `/api/items?category=${category}&q=${encodeURIComponent(keyword)}`
+        : `/api/external/${category}?q=${encodeURIComponent(keyword)}`;
 
       const res = await fetch(endpoint);
       const data = await res.json();

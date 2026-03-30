@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { getLocalDateString } from '@/lib/utility';
 import { CategoryConfig } from '@/types';
 

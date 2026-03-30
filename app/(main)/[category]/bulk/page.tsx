@@ -158,10 +158,10 @@ export default function AddBulkPage() {
     console.log(itemsToSave);
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/${category}/bulk`, {
+      const res = await fetch(`/api/selections/bulk`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, items: itemsToSave }),
+        body: JSON.stringify({ category, userId, items: itemsToSave }),
       });
 
       if (res.ok) {
@@ -172,6 +172,7 @@ export default function AddBulkPage() {
       }
     } catch (err) {
       console.log(err);
+      alert('일괄 저장 실패');
     } finally {
       setIsSubmitting(false);
     }
@@ -283,6 +284,7 @@ export default function AddBulkPage() {
             <h3 className="text-sm font-bold text-gray-500 mb-3">2. 상세 정보 확인 및 확정</h3>
             <ItemForm
               config={config}
+              fields={config.fields}
               formData={formData}
               onChange={handleFormChange}
               onSubmit={handleFormSubmit}
