@@ -4,12 +4,7 @@ import { getLocalDateString } from "../utility";
 export async function searchITunes(query: string) {
   const term = encodeURIComponent(query).replace(/%20/g, '+');
 
-<<<<<<< HEAD
-  // 1. entity=album으로 앨범 단위 검색을 명시하여 곡(track) 검색 시 발생하는 노이즈 제거
-  const endpoint = `https://itunes.apple.com/search?term=${term}&entity=album&media=music&limit=50&country=KR&lang=ko_kr`;
-=======
   const endpoint = `https://itunes.apple.com/search?term=${term}&media=all&entity=album&attribute=albumTerm&limit=50&country=KR&lang=ko_kr`;
->>>>>>> 4c19a7b8 (fix: ItemSearch placeholder 값 수정)
 
   const res = await fetch(endpoint);
   if (!res.ok) {
