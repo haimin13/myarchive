@@ -221,7 +221,11 @@ export default function AddPage() {
             <form onSubmit={handleSearch} className="flex gap-2 mb-6">
               <input
                 type="text"
+<<<<<<< HEAD:deprecated_backup/[category]/add/page.tsx
                 placeholder={`제목 또는 ${creatorLabel} 검색`}
+=======
+                placeholder={`제목 또는 ${config.fields[3].label} 검색`}
+>>>>>>> 4c19a7b8 (fix: ItemSearch placeholder 값 수정):app/_deprecated/[category]/add/page.tsx
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
