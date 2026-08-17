@@ -4,7 +4,7 @@ import { getLocalDateString } from "../utility";
 export async function searchITunes(query: string) {
   const term = encodeURIComponent(query).replace(/%20/g, '+');
 
-  const endpoint = `https://itunes.apple.com/search?term=${term}&media=all&entity=album&attribute=albumTerm&limit=50&country=KR&lang=ko_kr`;
+  const endpoint = `https://itunes.apple.com/search?media=music&country=kr&term=${term}`;
 
   const res = await fetch(endpoint);
   if (!res.ok) {
@@ -13,22 +13,18 @@ export async function searchITunes(query: string) {
 
   const data = await res.json();
 
-  const bestAlbums = new Map<string, any>();
+  const bestAlbums = new Map<number, any>();
 
-  // 2. 검색 결과 정제: 동일한 가수+앨범명이 있을 경우 가장 먼저 발매된(original) 앨범 우선
   data.results.forEach((item: any) => {
-    if (!item.collectionName || !item.artistName) return;
+    if (!item.collectionId) return;
 
-    const key = `${item.artistName.toLowerCase()}_${item.collectionName.toLowerCase()}`.trim();
+    const key = item.collectionId;
     const existing = bestAlbums.get(key);
 
     if (!existing) {
       bestAlbums.set(key, item);
-    } else {
-      // 앨범 단위 검색에서는 trackCount보다 releaseDate가 중요 (최초 발매 앨범 찾기)
-      if (item.releaseDate < existing.releaseDate) {
-        bestAlbums.set(key, item);
-      }
+    } else if (item.releaseDate > existing.releaseDate) {
+      bestAlbums.set(key, item);
     }
   });
 
@@ -40,7 +36,7 @@ export async function searchITunes(query: string) {
     return {
       id: null,
       title: item.collectionName,
-      creator: item.artistName,
+      creator: item.collectionArtistName || item.artistName,
       img_dir: highResImageUrl,
       release_date: item.releaseDate ? getLocalDateString(item.releaseDate) : '',
     };

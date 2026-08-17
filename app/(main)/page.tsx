@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CATEGORY_CONFIG } from '../constants';
@@ -11,6 +11,17 @@ export default function Home() {
   const { user, logout, isLoading } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+
+  const testSpringApi = async () => {
+    try {
+
+      const res = await fetch('http://localhost:8080/api/hello');
+      const data = await res.text();
+      console.log("spring data: ", data);
+    } catch (e) {
+      console.error("error: ", e);
+    }
+  };
 
 
   const handleLogout = async () => {
@@ -34,6 +45,10 @@ export default function Home() {
       alert('로그인이 필요한 서비스입니다.');
     }
   };
+
+  useEffect(() => {
+    testSpringApi();
+  }, []);
 
   return (
     // 💡 relative를 추가하여 내부의 absolute 요소들의 기준점이 되게 함
